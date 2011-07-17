@@ -63,31 +63,34 @@ for gi, g in graphics.items():
     compressed = readbyte()
     data = bytearray() 
     total = readshort()
-    if compressed == 0x00:
-        for i in range(total):
-            data.append(readbyte())
+    if total > 0:
+        if compressed == 0x00:
+            for i in range(total):
+                data.append(readbyte())
+        else:
+            while len(data) < total: 
+                modes = readshort()
+                for mode in bin(modes)[2:].zfill(16)[::-1]:
+                    if int(mode) == 1:
+                        e = rom.read(1)
+                        d = rom.read(1)
+                        loc = -(struct.unpack("<H", e+d)[0]  & 0x07ff) 
+                        num = ((struct.unpack("<B", d)[0] >> 3) & 0x1f) + 0x03 
+                        loc += len(data)-1
+                        for j in range(num):
+                            data.append(data[loc+j])
+                    else:
+                        data.append(readbyte())
+                
+            data = data[:total]
+
+        g = open(os.path.join('g', '{}.gb'.format(hex(gi)[2:].zfill(2))), 'wb')
+        g.write(data)
+        g.close()
+
+        print('{} {} ({})'.format("Decompressed" if compressed else "Exctracted", hex(gi), hex(l)))
     else:
-        while len(data) < total: 
-            modes = readshort()
-            for mode in bin(modes)[2:].zfill(16)[::-1]:
-                if int(mode) == 1:
-                    e = rom.read(1)
-                    d = rom.read(1)
-                    loc = -(struct.unpack("<H", e+d)[0]  & 0x07ff) 
-                    num = ((struct.unpack("<B", d)[0] >> 3) & 0x1f) + 0x03 
-                    loc += len(data)-1
-                    for j in range(num):
-                        data.append(data[loc+j])
-                else:
-                    data.append(readbyte())
-            
-        data = data[:total]
-
-    g = open(os.path.join('g', '{}.gb'.format(hex(gi)[2:].zfill(2))), 'wb')
-    g.write(data)
-    g.close()
-
-    print('{} {} ({})'.format("Decompressed" if compressed else "Exctracted", hex(gi), hex(l)))
+        print('{} ({}) is blank!'.format(hex(gi), hex(l)))
 
 print ("Done..!")
 rom.close()
