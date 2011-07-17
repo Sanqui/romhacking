@@ -1,8 +1,13 @@
 #!/usr/bin/python3
 
-# punika is a graphics decompressor for the game Keitai Denjuu Telefang.
-# It creates a folder called g and places all game's compressed graphics in it
-# in raw, so it can be read by your favorite tile editor (Tile Molester, TLP,
+# punika is a graphics decompresser for the game Keitai Denjuu Telefang, which
+# uses the Malias compression, roughly designed after LZ77.
+# Refer to 
+# http://wikifang.meowcorp.us/wiki/Wikifang:Telefang_1_Translation_Patch/Malias_compression
+# for details.
+#
+# punika  creates a folder called g and places all game's compressed graphics
+# in it raw, so it can be read by your favorite tile editor (Tile Molester, TLP,
 # etc.)
 # -- Sanky
 
@@ -64,25 +69,18 @@ for gi, g in graphics.items():
         loc = 0        
 
         while len(data) < total: 
-            de = readshort()
-            for i in range(0x10):
-                carry = de & 1
-                de = de // 2
-                #print ('de = {}\t[{}]'.format(hex(de), carry))
-                if carry:
+            modes = readshort()
+            for mode in bin(modes)[2:].zfill(16)[::-1]:
+                if int(mode) == 1:
                     e = rom.read(1)
                     d = rom.read(1)
-                    de_ = -(struct.unpack("<H", e+d)[0]  & 0x07ff) 
-                    a = ((struct.unpack("<B", d)[0] >> 3) & 0x1f) + 0x03 
-                    #print(d, hex(struct.unpack("<B", d)[0] >> 3), hex((struct.unpack("<B", d)[0] >> 3) & 0x1f), hex(a), ';', hex(de_), hex(de_+hl))
-                    de_+=len(data)-1
-                    for i in range(a):
-                        data.append(data[de_])
-                        #print("{:>7} <<< {:>4}\t(de_={}, bc={}, a={})".format(hex(hl), hex(data[hl]), hex(de_), hex(bc), hex(a)))
-                        de_ += 1
+                    loc = -(struct.unpack("<H", e+d)[0]  & 0x07ff) 
+                    num = ((struct.unpack("<B", d)[0] >> 3) & 0x1f) + 0x03 
+                    loc += len(data)-1
+                    for j in range(num):
+                        data.append(data[loc+j])
                 else:
                     data.append(readbyte())
-                    #print ("{:>7} <<< {:>4}\t({})".format(hex(hl),hex(data[hl]), hex(rom.tell()-1%0x4000)))
             
         data = data[:total]
 
