@@ -60,14 +60,13 @@ for gi, g in graphics.items():
     l = abspointer(g['bank'], g['pointer'])
     rom.seek(l)
 
-    if rom.read(1) == b'\x00':
-        print ("Reading uncompressed data is unimplemented yet.")
+    compressed = readbyte()
+    data = bytearray() 
+    total = readshort()
+    if compressed == 0x00:
+        for i in range(total):
+            data.append(readbyte())
     else:
-        #print ('Decompressing {} ({}).'.format(hex))
-        data = bytearray()  
-        total = readshort()
-        loc = 0        
-
         while len(data) < total: 
             modes = readshort()
             for mode in bin(modes)[2:].zfill(16)[::-1]:
@@ -84,11 +83,11 @@ for gi, g in graphics.items():
             
         data = data[:total]
 
-        g = open(os.path.join('g', '{}.gb'.format(hex(gi)[2:].zfill(2))), 'wb')
-        g.write(data)
-        g.close()
+    g = open(os.path.join('g', '{}.gb'.format(hex(gi)[2:].zfill(2))), 'wb')
+    g.write(data)
+    g.close()
 
-        print('Decompressed {} ({})'.format(hex(gi), hex(l)))
+    print('{} {} ({})'.format("Decompressed" if compressed else "Exctracted", hex(gi), hex(l)))
 
 print ("Done..!")
 rom.close()
