@@ -38,7 +38,7 @@ rom = open(rom, 'rb')
 rom.seek(0x18000)
 for i in range(0x128):
     bank, target = struct.unpack("<BH", rom.read(3))
-    if target > 0x8000 and target < 0xa000:
+    if target > 0x7fff and target < 0xa000:
         graphics[i] = {'target':target, 'bank':bank}
     rom.read(1)
 rom.seek(0x1DE1)
