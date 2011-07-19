@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 
-# punika is a graphics decompresser for the game Keitai Denjuu Telefang, which
-# uses the Malias compression, roughly designed after LZ77.
+# punika is a graphics decompresser for games using the Malias compression,
+# roughly designed after LZ77, used in numerous Natsume games.
 # Refer to 
 # http://wikifang.meowcorp.us/wiki/Wikifang:Telefang_1_Translation_Patch/Malias_compression
 # for details.
-#
-# punika  creates a folder called g and places all game's compressed graphics
+# punika currently supports Keitai Denjuu Telefang; Medarot 1, 2 and 3.
+# punika creates a folder called g and places all game's compressed graphics
 # in it raw, so it can be read by your favorite tile editor (Tile Molester, TLP,
 # etc.)
 # Use the -l option if you want to simply list the locations.
@@ -122,6 +122,18 @@ if __name__ == '__main__':
             if g['target'] > 0x7fff and g['target'] < 0xa000 and g['pointer'] > 0x3fff and g['pointer'] < 0x8000:
                 graphics[i] = g
             rom.seek((0x3b*0x4000)+0x282b+(i*0x4)+4)
+    elif game == b'MEDAROT3':
+        rom.seek((0x39*0x4000)+0x306a)
+        for i in range(0x1ff):
+            g = {}
+            g['bank'] = readbyte()
+            g['target'] = readshort()
+            g['vrambank'] = readbyte()
+            rom.seek(0x3995+(i*0x2))
+            g['pointer'] = readshort()
+            if g['target'] > 0x7fff and g['target'] < 0xa000 and g['pointer'] > 0x3fff and g['pointer'] < 0x8000:
+                graphics[i] = g
+            rom.seek((0x39*0x4000)+0x306a+(i*0x4)+4)
     else:
         os.quit('Unsupported ROM.')
     
