@@ -5,7 +5,7 @@
 # Refer to 
 # http://wikifang.meowcorp.us/wiki/Wikifang:Telefang_1_Translation_Patch/Malias_compression
 # for details.
-# punika currently supports Keitai Denjuu Telefang; Medarot 1, 2 and 3.
+# punika currently supports Keitai Denjuu Telefang; Medarot 1, 2 and 3; Croc 2.
 # punika creates a folder called g and places all game's compressed graphics
 # in it raw, so it can be read by your favorite tile editor (Tile Molester, TLP,
 # etc.)
@@ -134,6 +134,10 @@ if __name__ == '__main__':
             if g['target'] > 0x7fff and g['target'] < 0xa000 and g['pointer'] > 0x3fff and g['pointer'] < 0x8000:
                 graphics[i] = g
             rom.seek((0x39*0x4000)+0x306a+(i*0x4)+4)
+    elif game == b'CROC 2\0\0':
+        # This game probably sets all offsets manually.  You're on your own here!  Check out RO3F:59F5 for starters.
+        graphics = {0:{'bank': 0x3b, 'target': 0x8000, 'vrambank': 0x00, 'pointer': 0x5218},
+                    1:{'bank': 0x3d, 'target': 0x9000, 'vrambank': 0x00, 'pointer': 0x5e94},}
     else:
         os.quit('Unsupported ROM.')
     
