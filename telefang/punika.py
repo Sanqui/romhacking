@@ -143,10 +143,13 @@ if __name__ == '__main__':
     
     if action == 'list':
         for i, g in graphics.items():
-            print ("{:>4} - bank {:>4} + {:>8} ({:>8}) read in {:>7}".format(hex(i),
+            rom.seek(abspointer(g['bank'], g['pointer']))
+            compressed = readbyte()
+            total = readshort()
+            print ("{:>4} - bank {:>4} + {:>8} ({:>8}), {} bytes {} read in {:>7}".format(hex(i),
             hex(g['bank']), 
             hex(g['pointer']), 
-            hex(abspointer(g['bank'], g['pointer'])), hex(g['target'])))
+            hex(abspointer(g['bank'], g['pointer'])), hex(total), "compressed" if compressed else "not compressed", hex(g['target'])))
     
     elif action == 'extract':
         for gi, g in graphics.items():
