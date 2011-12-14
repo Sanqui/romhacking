@@ -1,4 +1,15 @@
-telefang/g/
-telefang/g/*
 *.gb
 *.gbc
+*.gba
+*.sav
+*.sa1
+*.sgm
+
+*~
+
+etc
+
+telefang/g/
+telefang/g/*
+
+pokemon/construct
