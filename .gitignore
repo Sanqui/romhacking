@@ -7,9 +7,14 @@
 
 *~
 
+*__pycache__*
+
 etc
 
 telefang/g/
 telefang/g/*
+
+hp/d/
+hp/*.txt
 
 pokemon/construct
