@@ -61,14 +61,15 @@ def readpalette():
     
 def createppm(tiles, width=6, height=4):
     ppm = """P6
-{0} {1} 31
+{0} {1}
+255
 """.format(width*8, height*8).encode("ascii")
     for row in range(height*8):
         for col in range(width*8):
             #print("{}x{} [{}][{}] - ".format(row,col, (width)*(row//8)+(col//8), 8*(row%8)+(col%8)), end="")
             try:
                 r, g, b = tiles[(width)*(row//8)+(col//8)][8*(row%8)+(col%8)]
-                ppm += struct.pack("BBB", r, g, b)
+                ppm += struct.pack("BBB", r*8, g*8, b*8)
             except IndexError:
                 raise
     return ppm
