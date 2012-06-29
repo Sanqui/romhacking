@@ -125,13 +125,13 @@ for sprite in pokesilhouettes:
 for i in range(len(pokesprites)):
     sprite = pokesprites[i]
     ppm = createppm(sprite)
-    g = open('s/{}.ppm'.format(i), 'wb')
+    g = open('s/{}.ppm'.format(i+1), 'wb')
     g.write(ppm)
     g.close()
     
     silhouette = pokesilhouettes[i]
     ppm = createppm(pokesilhouettes[i])
-    g = open('s/silhouettes/{}.ppm'.format(i), 'wb')
+    g = open('s/silhouettes/{}.ppm'.format(i+1), 'wb')
     g.write(ppm)
     g.close()
     print ('Wrote {}'.format(i))
