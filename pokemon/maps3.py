@@ -13,7 +13,8 @@ mapcounts = [54, 5, 5, 6, 7, 7, 8, 7, 7, 13, 8, 17, 10, 24, 13, 13, 14, 2, 2,
 #TODO: Do this using Construct as well!
 def parse_script_for_item(rom, loc, brute_force=False):
     def readbyte(): return ord(rom.read(1))
-    def readshort(): return ord(rom.read(1))+ord(rom.read(1))*256
+    def readshort(): return readbyte() + (readbyte() << 8)
+    def readint(): return readbyte() + (readbyte() << 8) + (readbyte() << 16) + (readbyte() << 24)
     try: rom.seek(loc)
     except IOError: return None,None
     item = None
@@ -37,6 +38,8 @@ def parse_script_for_item(rom, loc, brute_force=False):
                 return item, amount
             else:
                 return None, None
+        elif code == 0x05: # goto
+            return None, None
         else:
             if not brute_force:
                 return None, None
@@ -349,6 +352,7 @@ def main(rom):
                     if person.sprite == 59:
                         item, amount = parse_script_for_item(f, person.p_script-0x8000000)
                         if item != None:
+                            print(item, amount)
                             print("  [{0}, {1}]\t{2} ×{3}".format(person.xpos, person.ypos, identifier(p.item[item].name), amount))
                     else:
                         item, amount = parse_script_for_item(f, person.p_script-0x8000000, brute_force=True)
