@@ -10,33 +10,25 @@ mode = "print"
 mapcounts = [54, 5, 5, 6, 7, 7, 8, 7, 7, 13, 8, 17, 10, 24, 13, 13, 14, 2, 2,
              2, 3, 1, 1, 1, 86, 44, 12, 2, 1, 13, 1, 1, 3]
 
-
-# XXX read from rom.
-if mode == "print":
-    items = ['Nothing', 'Master Ball', 'Ultra Ball', 'Great Ball', 'Poké Ball', 'Safari Ball', 'Net Ball', 'Dive Ball', 'Nest Ball', 'Repeat Ball', 'Timer Ball', 'Luxury Ball', 'Premier Ball', 'Potion', 'Antidote', 'Burn Heal', 'Ice Heal', 'Awakening', 'Parlyz Heal', 'Full Restore', 'Max Potion', 'Hyper Potion', 'Super Potion', 'Full Heal', 'Revive', 'Max Revive', 'Fresh Water', 'Soda Pop', 'Lemonade', 'Moomoo Milk', 'EnergyPowder', 'Energy Root', 'Heal Powder', 'Revival Herb', 'Ether', 'Max Ether', 'Elixir', 'Max Elixir', 'Lava Cookie', 'Blue Flute', 'Yellow Flute', 'Red Flute', 'Black Flute', 'White Flute', 'Berry Juice', 'Sacred Ash', 'Shoal Salt', 'Shoal Shell', 'Red Shard', 'Blue Shard', 'Yellow Shard', 'Green Shard', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', 'HP Up', 'Protein', 'Iron', 'Carbos', 'Calcium', 'Rare Candy', 'PP Up', 'Zinc', 'PP Max', '???', 'Guard Spec.', 'Dire Hit', 'X Attack', 'X Defend', 'X Speed', 'X Accuracy', 'X Special', 'Poké Doll', 'Fluffy Tail', '???', 'Super Repel', 'Max Repel', 'Escape Rope', 'Repel', '???', '???', '???', '???', '???', '???', 'Sun Stone', 'Moon Stone', 'Fire Stone', 'Thunderstone', 'Water Stone', 'Leaf Stone', '???', '???', '???', '???', 'TinyMushroom', 'Big Mushroom', '???', 'Pearl', 'Big Pearl', 'Stardust', 'Star Piece', 'Nugget', 'Heart Scale', '???', '???', '???', '???', '???', '???', '???', '???', '???', 'Orange Mail', 'Harbor Mail', 'Glitter Mail', 'Mech Mail', 'Wood Mail', 'Wave Mail', 'Bead Mail', 'Shadow Mail', 'Tropic Mail', 'Dream Mail', 'Fab Mail', 'Retro Mail', 'Cheri Berry', 'Chesto Berry', 'Pecha Berry', 'Rawst Berry', 'Aspear Berry', 'Leppa Berry', 'Oran Berry', 'Persim Berry', 'Lum Berry', 'Sitrus Berry', 'Figy Berry', 'Wiki Berry', 'Mago Berry', 'Aguav Berry', 'Iapapa Berry', 'Razz Berry', 'Bluk Berry', 'Nanab Berry', 'Wepear Berry', 'Pinap Berry', 'Pomeg Berry', 'Kelpsy Berry', 'Qualot Berry', 'Hondew Berry', 'Grepa Berry', 'Tamato Berry', 'Cornn Berry', 'Magost Berry', 'Rabuta Berry', 'Nomel Berry', 'Spelon Berry', 'Pamtre Berry', 'Watmel Berry', 'Durin Berry', 'Belue Berry', 'Liechi Berry', 'Ganlon Berry', 'Salac Berry', 'Petaya Berry', 'Apicot Berry', 'Lansat Berry', 'Starf Berry', 'Enigma Berry', '???', '???', '???', 'BrightPowder', 'White Herb', 'Macho Brace', 'Exp. Share', 'Quick Claw', 'Soothe Bell', 'Mental Herb', 'Choice Band', "King's Rock", 'SilverPowder', 'Amulet Coin', 'Cleanse Tag', 'Soul Dew', 'DeepSeaTooth', 'DeepSeaScale', 'Smoke Ball', 'Everstone', 'Focus Band', 'Lucky Egg', 'Scope Lens', 'Metal Coat', 'Leftovers', 'Dragon Scale', 'Light Ball', 'Soft Sand', 'Hard Stone', 'Miracle Seed', 'BlackGlasses', 'Black Belt', 'Magnet', 'Mystic Water', 'Sharp Beak', 'Poison Barb', 'NeverMeltIce', 'Spell Tag', 'TwistedSpoon', 'Charcoal', 'Dragon Fang', 'Silk Scarf', 'Up-Grade', 'Shell Bell', 'Sea Incense', 'Lax Incense', 'Lucky Punch', 'Metal Powder', 'Thick Club', 'Stick', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', '???', 'Red Scarf', 'Blue Scarf', 'Pink Scarf', 'Green Scarf', 'Yellow Scarf', 'Mach Bike', 'Coin Case', 'Itemfinder', 'Old Rod', 'Good Rod', 'Super Rod', 'S.S. Ticket', 'Contest Pass', '???', 'Wailmer Pail', 'Devon Goods', 'Soot Sack', 'Basement Key', 'Acro Bike', 'Pokéblock Case', 'Letter', 'Eon Ticket', 'Red Orb', 'Blue Orb', 'Scanner', 'Go-Goggles', 'Meteorite', 'Rm. 1 Key', 'Rm. 2 Key', 'Rm. 4 Key', 'Rm. 6 Key', 'Storage Key', 'Root Fossil', 'Claw Fossil', 'Devon Scope', 'TM01', 'TM02', 'TM03', 'TM04', 'TM05', 'TM06', 'TM07', 'TM08', 'TM09', 'TM10', 'TM11', 'TM12', 'TM13', 'TM14', 'TM15', 'TM16', 'TM17', 'TM18', 'TM19', 'TM20', 'TM21', 'TM22', 'TM23', 'TM24', 'TM25', 'TM26', 'TM27', 'TM28', 'TM29', 'TM30', 'TM31', 'TM32', 'TM33', 'TM34', 'TM35', 'TM36', 'TM37', 'TM38', 'TM39', 'TM40', 'TM41', 'TM42', 'TM43', 'TM44', 'TM45', 'TM46', 'TM47', 'TM48', 'TM49', 'TM50', 'HM01', 'HM02', 'HM03', 'HM04', 'HM05', 'HM06', 'HM07', 'HM08', '???', '???', "Oak's Parcel", 'Poké Flute', 'Secret Key', 'Bike Voucher', 'Gold Teeth', 'Old Amber', 'Card Key', 'Lift Key', 'Dome Fossil', 'Helix Fossil', 'Silph Scope', 'Bicycle', 'Town Map', 'Vs. Seeker', 'Fame Checker', 'TM Case', 'TM27', 'TM28', 'TM29', 'TM30', 'TM31', 'TM32', 'TM33', 'TM34', 'TM35', 'TM36', 'TM37', 'TM38', 'TM39', 'TM40', 'TM41', 'TM42', 'TM43', 'TM44', 'TM45', 'TM46', 'TM47', 'TM48', 'TM49', 'TM50', 'HM01', 'HM02', 'HM03', 'HM04', 'HM05', 'HM06', 'HM07', 'HM08', '???', '???', "Oak's Parcel", 'Poké Flute', 'Secret Key', 'Bike Voucher', 'Gold Teeth', 'Old Amber', 'Card Key', 'Lift Key', 'Dome Fossil', 'Helix Fossil', 'Silph Scope', 'Bicycle', 'Town Map', 'Vs. Seeker', 'Fame Checker', 'TM Case']
-
-
-#ew
-def readbyte(rom): return ord(rom.read(1))
-def readshort(rom): return ord(rom.read(1))+ord(rom.read(1))*256
-
 #TODO: Do this using Construct as well!
 def parse_script_for_item(rom, loc):
+    def readbyte(): return ord(rom.read(1))
+    def readshort(): return ord(rom.read(1))+ord(rom.read(1))*256
     try: rom.seek(loc)
     except IOError: return None,None
     item = None
     amount = None
     while True:
-        code = readbyte(rom)
+        code = readbyte()
         if code == 0x1a: # copyvarifnot0
-            loc = readshort(rom)
-            val = readshort(rom)
+            loc = readshort()
+            val = readshort()
             if loc == 0x8000:
                 item = val
             elif loc == 0x8001:
                 amount = val
         elif code == 0x09: # callstd
-            std = readbyte(rom)
+            std = readbyte()
             if std == 1:
                 giveitem = True
         elif code == 0x02: # end
@@ -162,6 +154,39 @@ class PrintContext(Construct):
         print context
         #raise RuntimeError()
         
+Item = Struct("item",
+    PokemonStringAdapter(String("name", 14)),
+    ULInt16("id"),
+    ULInt16("price"),
+    Byte("special1"),
+    Byte("special2"),
+    ULInt32("p_description"),
+    ULInt16("u1"),
+    Enum(Byte("pocket"),
+        main = 1,
+        pokeballs = 2,
+        tms_hms = 3,
+        berries = 4,
+        key_items = 5
+        ),
+    Embed(IfThenElse("x", lambda ctx: ctx.pocket != 'pokeballs', 
+        Enum(Byte("overworld_usage"),
+            mail = 0,
+            usable = 1,
+            usable_somewhere = 2,
+            pokeblock_case = 3,
+            unusable = 4
+            ),
+        Byte("pokeball_number"))),
+    ULInt32("p_field_code"),
+    Enum(ULInt32("battle_usage"),
+        unusable = 0,
+        subscreen = 1,
+        battle = 2
+        ),
+    ULInt32("p_battle_code"),
+    ULInt32("extra"),
+)
 
 PersonEvent = Struct("personevent",
     Byte("number"),
@@ -291,6 +316,9 @@ MapBankTable = Struct("map_bank_table",
 ROM = Struct("rom",
     #Pointer(lambda ctx: 0x3e7010,
     #    Array(lambda ctx:79, PokemonStringAdapter(CString('map_name', terminators="\xff")))),
+    Pointer(lambda ctx:0x3C5580,
+        GreedyRange(Item)
+    ),
     Pointer(lambda ctx:0x3e73e0,
         GreedyRange(Struct('map_name',
             ULInt32("unk"),
@@ -309,7 +337,7 @@ def main(rom):
     rom = f.read()
     
     p = ROM.parse(rom)
-    print(p.map_name)
+    #print(p.item)
     if mode == "print":
         for bank in p.map_bank_table.banks:
             print("Bank {0}, has {1} maps".format(bank.bank_num, len(bank.headers)))
@@ -319,10 +347,10 @@ def main(rom):
                     if person.sprite == 59:
                         item, amount = parse_script_for_item(f, person.p_script-0x8000000)
                         if item != None:
-                            print("  [{0}, {1}] {2} ×{3}".format(person.xpos, person.ypos, items[item], amount))
+                            print("  [{0}, {1}] {2} ×{3}".format(person.xpos, person.ypos, identifier(p.item[item].name), amount))
                 for sign in map.event_set.signevent:
                     if sign.type in (5, 6, 7):
-                        print("  [{0}, {1}] {2} (hidden)".format(sign.xpos, sign.ypos, items[sign.data.item]))
+                        print("  [{0}, {1}] {2} (hidden)".format(sign.xpos, sign.ypos, identifier(p.item[sign.data.item].name)))
     
     f.close()
 
