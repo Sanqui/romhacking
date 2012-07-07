@@ -11,13 +11,14 @@ mapcounts = [54, 5, 5, 6, 7, 7, 8, 7, 7, 13, 8, 17, 10, 24, 13, 13, 14, 2, 2,
              2, 3, 1, 1, 1, 86, 44, 12, 2, 1, 13, 1, 1, 3]
 
 #TODO: Do this using Construct as well!
-def parse_script_for_item(rom, loc):
+def parse_script_for_item(rom, loc, brute_force=False):
     def readbyte(): return ord(rom.read(1))
     def readshort(): return ord(rom.read(1))+ord(rom.read(1))*256
     try: rom.seek(loc)
     except IOError: return None,None
     item = None
     amount = None
+    giveitem = False
     while True:
         code = readbyte()
         if code == 0x1a: # copyvarifnot0
@@ -29,7 +30,7 @@ def parse_script_for_item(rom, loc):
                 amount = val
         elif code == 0x09: # callstd
             std = readbyte()
-            if std == 1:
+            if std in (0, 1):
                 giveitem = True
         elif code == 0x02: # end
             if giveitem:
@@ -37,7 +38,8 @@ def parse_script_for_item(rom, loc):
             else:
                 return None, None
         else:
-            return None, None
+            if not brute_force:
+                return None, None
 
 
 class PokemonStringAdapter(Adapter):
@@ -347,10 +349,14 @@ def main(rom):
                     if person.sprite == 59:
                         item, amount = parse_script_for_item(f, person.p_script-0x8000000)
                         if item != None:
-                            print("  [{0}, {1}] {2} ×{3}".format(person.xpos, person.ypos, identifier(p.item[item].name), amount))
+                            print("  [{0}, {1}]\t{2} ×{3}".format(person.xpos, person.ypos, identifier(p.item[item].name), amount))
+                    else:
+                        item, amount = parse_script_for_item(f, person.p_script-0x8000000, brute_force=True)
+                        if item != None and item in range(len(p.item)):
+                            print("  [{0}, {1}]\t{2} ×{3} (from npc)".format(person.xpos, person.ypos, identifier(p.item[item].name), amount))
                 for sign in map.event_set.signevent:
                     if sign.type in (5, 6, 7):
-                        print("  [{0}, {1}] {2} (hidden)".format(sign.xpos, sign.ypos, identifier(p.item[sign.data.item].name)))
+                        print("  [{0}, {1}]\t{2} (hidden)".format(sign.xpos, sign.ypos, identifier(p.item[sign.data.item].name)))
     
     f.close()
 
