@@ -10,39 +10,47 @@ mode = "print"
 mapcounts = [54, 5, 5, 6, 7, 7, 8, 7, 7, 13, 8, 17, 10, 24, 13, 13, 14, 2, 2,
              2, 3, 1, 1, 1, 86, 44, 12, 2, 1, 13, 1, 1, 3]
 
+class ItemInstance():
+    def __init__(self, item, amount):
+        self.item = item
+        self.amount = amount
+
+class TrainerBattleInstance():
+    def __init__(self, u, id):
+        self.u = u
+        self.id = id
+
 #TODO: Do this using Construct as well!
-def parse_script_for_item(rom, loc, brute_force=False):
+def parse_script(rom, loc, brute_force=False):
     def readbyte(): return ord(rom.read(1))
     def readshort(): return readbyte() + (readbyte() << 8)
     def readint(): return readbyte() + (readbyte() << 8) + (readbyte() << 16) + (readbyte() << 24)
     try: rom.seek(loc)
-    except IOError: return None,None
-    item = None
-    amount = None
-    giveitem = False
+    except IOError: return []
+    mem = {0x8000: 0, 0x8001: 0}
+    stuff = []
     while True:
         code = readbyte()
         if code == 0x1a: # copyvarifnot0
             loc = readshort()
             val = readshort()
-            if loc == 0x8000:
-                item = val
-            elif loc == 0x8001:
-                amount = val
+            mem[loc] = val
         elif code == 0x09: # callstd
             std = readbyte()
             if std in (0, 1):
-                giveitem = True
+                stuff.append(ItemInstance(mem[0x8000], mem[0x8001]))
         elif code == 0x02: # end
-            if giveitem:
-                return item, amount
-            else:
-                return None, None
+            return stuff
         elif code == 0x05: # goto
-            return None, None
+            return stuff
+        elif code == 0x5c: # trainerbattle
+            u = readbyte()
+            id = readshort()
+            # script pointers?
+            stuff.append(TrainerBattleInstance(u, id))
         else:
             if not brute_force:
-                return None, None
+                return stuff
 
 
 class PokemonStringAdapter(Adapter):
@@ -75,8 +83,8 @@ class PokemonStringAdapter(Adapter):
     0xB2: '"2',
     0xB3: '\'2',
     0xB4: '\'',
-    0xB5: 'mA',
-    0xB6: 'fE',
+    0xB5: '♂',
+    0xB6: '♀',
     0xB7: '$',
     0xB8: ',',
     0xB9: '×',
@@ -191,6 +199,35 @@ Item = Struct("item",
         ),
     ULInt32("p_battle_code"),
     ULInt32("extra"),
+)
+
+PartyPokemon = Struct("party_pokemon",
+    ULInt16("u1"),
+    ULInt16("level"),
+    ULInt16("species"),
+    Peek(ULInt16("move1")),
+    IfThenElse("move_data", lambda ctx: ctx.move1 == 0,
+        Pass,
+        Array(4, ULInt16("move"))),
+    ULInt16("u2"),
+)
+
+Trainer = Struct("trainer",
+    Byte("trainer_class"),
+    Byte("u1"),
+    Byte("sprite"),
+    PokemonStringAdapter(String('name', 12)),
+    Array(4, ULInt16("item")),
+    Byte("is_double"),
+    Padding(3),
+    ULInt16("u2"),
+    Padding(2),
+    ULInt16("party_size"),
+    Padding(2),
+    ULInt32("p_party"),
+    Padding(1),
+    Pointer(lambda ctx: ctx.p_party-0x8000000,
+            Array(lambda ctx: ctx.party_size, PartyPokemon)),
 )
 
 PersonEvent = Struct("personevent",
@@ -324,6 +361,12 @@ ROM = Struct("rom",
     Pointer(lambda ctx:0x3C5580,
         GreedyRange(Item)
     ),
+    Pointer(lambda ctx:0x1f053d,
+        GreedyRange(Trainer)),
+    Pointer(lambda ctx:0x1f7184,
+        Array(412, PokemonStringAdapter(String('pokemon_name', 11)))),
+    Pointer(lambda ctx:0x1f0220,
+        Array(60, PokemonStringAdapter(String('trainer_class_name', 13)))),
     Pointer(lambda ctx:0x3e73e0,
         GreedyRange(Struct('map_name',
             ULInt32("unk"),
@@ -342,7 +385,7 @@ def main(rom):
     rom = f.read()
     
     p = ROM.parse(rom)
-    #print(p.item)
+    #print( p.trainer_class_name)
     if mode == "print":
         for bank in p.map_bank_table.banks:
             print("Bank {0}, has {1} maps".format(bank.bank_num, len(bank.headers)))
@@ -350,14 +393,17 @@ def main(rom):
                 print(" {0}.{1} {2}: {3} people".format(bank.bank_num, i, identifier(p.map_name[map.name].map_name), map.event_set.num_people))
                 for person in map.event_set.personevent:
                     if person.sprite == 59:
-                        item, amount = parse_script_for_item(f, person.p_script-0x8000000)
-                        if item != None:
-                            print(item, amount)
-                            print("  [{0}, {1}]\t{2} ×{3}".format(person.xpos, person.ypos, identifier(p.item[item].name), amount))
+                        item = parse_script(f, person.p_script-0x8000000)
+                        if item and isinstance(item[0], ItemInstance):
+                            item = item[0]
+                            print("  [{0}, {1}]\t{2} ×{3}".format(person.xpos, person.ypos, identifier(p.item[item.item].name), item.amount))
                     else:
-                        item, amount = parse_script_for_item(f, person.p_script-0x8000000, brute_force=True)
-                        if item != None and item in range(len(p.item)):
-                            print("  [{0}, {1}]\t{2} ×{3} (from npc)".format(person.xpos, person.ypos, identifier(p.item[item].name), amount))
+                        stuff = parse_script(f, person.p_script-0x8000000, brute_force=True)
+                        for thing in stuff:
+                            if isinstance(thing, ItemInstance) and thing.item in range(len(p.item)) and thing.item != 0:
+                                print("  [{0}, {1}]\t{2} ×{3} (from npc)".format(person.xpos, person.ypos, identifier(p.item[thing.item].name), thing.amount))
+                            elif isinstance(thing, TrainerBattleInstance) and thing.id in range(len(p.trainer)):
+                                print("  [{0}, {1}]\tTrainer {2} {3} [{4}]".format(person.xpos, person.ypos, p.trainer_class_name[p.trainer[thing.id].trainer_class], p.trainer[thing.id].name, ", ".join("{0} lv. {1}".format(identifier(p.pokemon_name[pokemon.species]), pokemon.level) for pokemon in p.trainer[thing.id].party_pokemon) ))
                 for sign in map.event_set.signevent:
                     if sign.type in (5, 6, 7):
                         print("  [{0}, {1}]\t{2} (hidden)".format(sign.xpos, sign.ypos, identifier(p.item[sign.data.item].name)))
