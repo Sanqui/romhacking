@@ -1,6 +1,24 @@
 # encoding: utf-8
 from construct import *
-from operator import iadd
+
+def LBitStruct(*args):
+    """Construct's bit structs read a byte at a time in the order they appear,
+    reading each bit from most to least significant.  Alas, this doesn't work
+    at all for a 32-bit bit field, because the bytes are 'backwards' in
+    little-endian files.
+
+    So this acts as a bit struct, but reverses the order of bytes before
+    reading/writing, so ALL the bits are read from most to least significant.
+    
+    Shamelessly stolen from Eevee's Gen IV PKM parser.
+    """
+    return Buffered(
+        BitStruct(*args),
+        encoder=lambda s: s[::-1],
+        decoder=lambda s: s[::-1],
+        resizer=lambda _: _,
+    )
+
 mode = "print"
 #if mode == "import":
 #    from pokedex.db import connect, tables, util
@@ -47,7 +65,7 @@ def parse_script(rom, loc, brute_force=False):
             u = readbyte()
             id = readshort()
             # script pointers?
-            stuff.append(TrainerBattleInstance(u, id))
+            stuff.append(TrainerBattleInstance(u-1, id-1))
         else:
             if not brute_force:
                 return stuff
@@ -202,19 +220,28 @@ Item = Struct("item",
 )
 
 PartyPokemon = Struct("party_pokemon",
-    ULInt16("u1"),
+    ULInt16("ai"),
     ULInt16("level"),
     ULInt16("species"),
-    Peek(ULInt16("move1")),
-    IfThenElse("move_data", lambda ctx: ctx.move1 == 0,
-        Pass,
-        Array(4, ULInt16("move"))),
-    ULInt16("u2"),
+    If(lambda ctx: ctx._.party_type in (0, 2),
+        ULInt16("item")),
+    If(lambda ctx: ctx._.party_type == 1,
+        Embed(Struct('moves',
+            Array(4, ULInt16("move")),
+            Padding(2)))),
+    If(lambda ctx: ctx._.party_type == 3,
+        Embed(Struct('item_and_moves',
+            ULInt16("item"),
+            Array(4, ULInt16("move")))))
 )
 
 Trainer = Struct("trainer",
+    Byte("party_type"),
     Byte("trainer_class"),
-    Byte("u1"),
+    Embed(LBitStruct("gender_and_music",
+        Bit('gender'),
+        BitField('music', 7)
+        )),
     Byte("sprite"),
     PokemonStringAdapter(String('name', 12)),
     Array(4, ULInt16("item")),
@@ -225,7 +252,6 @@ Trainer = Struct("trainer",
     ULInt16("party_size"),
     Padding(2),
     ULInt32("p_party"),
-    Padding(1),
     Pointer(lambda ctx: ctx.p_party-0x8000000,
             Array(lambda ctx: ctx.party_size, PartyPokemon)),
 )
@@ -361,7 +387,7 @@ ROM = Struct("rom",
     Pointer(lambda ctx:0x3C5580,
         GreedyRange(Item)
     ),
-    Pointer(lambda ctx:0x1f053d,
+    Pointer(lambda ctx:0x1f053c,
         GreedyRange(Trainer)),
     Pointer(lambda ctx:0x1f7184,
         Array(412, PokemonStringAdapter(String('pokemon_name', 11)))),
@@ -385,7 +411,7 @@ def main(rom):
     rom = f.read()
     
     p = ROM.parse(rom)
-    #print( p.trainer_class_name)
+    #print( p.trainer)
     if mode == "print":
         for bank in p.map_bank_table.banks:
             print("Bank {0}, has {1} maps".format(bank.bank_num, len(bank.headers)))
