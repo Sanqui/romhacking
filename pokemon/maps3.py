@@ -1,4 +1,6 @@
 # encoding: utf-8
+import csv
+from collections import defaultdict
 from construct import *
 
 def LBitStruct(*args):
@@ -28,47 +30,158 @@ mode = "print"
 mapcounts = [54, 5, 5, 6, 7, 7, 8, 7, 7, 13, 8, 17, 10, 24, 13, 13, 14, 2, 2,
              2, 3, 1, 1, 1, 86, 44, 12, 2, 1, 13, 1, 1, 3]
 
-class ItemInstance():
-    def __init__(self, item, amount):
-        self.item = item
-        self.amount = amount
-
-class TrainerBattleInstance():
-    def __init__(self, u, id):
-        self.u = u
-        self.id = id
-
-#TODO: Do this using Construct as well!
-def parse_script(rom, loc, brute_force=False):
-    def readbyte(): return ord(rom.read(1))
-    def readshort(): return readbyte() + (readbyte() << 8)
-    def readint(): return readbyte() + (readbyte() << 8) + (readbyte() << 16) + (readbyte() << 24)
-    try: rom.seek(loc)
-    except IOError: return []
-    mem = {0x8000: 0, 0x8001: 0}
-    stuff = []
-    while True:
-        code = readbyte()
-        if code == 0x1a: # copyvarifnot0
-            loc = readshort()
-            val = readshort()
-            mem[loc] = val
-        elif code == 0x09: # callstd
-            std = readbyte()
-            if std in (0, 1):
-                stuff.append(ItemInstance(mem[0x8000], mem[0x8001]))
-        elif code == 0x02: # end
-            return stuff
-        elif code == 0x05: # goto
-            return stuff
-        elif code == 0x5c: # trainerbattle
-            u = readbyte()
-            id = readshort()
-            # script pointers?
-            stuff.append(TrainerBattleInstance(u-1, id-1))
+class Instance(): pass
+# TODO make these namedtuples
+class ItemInstance(Instance):
+    verb = "gotten"
+    def __init__(self, mem):
+        self.item = mem[0x8000]
+        self.amount = mem[0x8001]
+    
+    def __str__(self):
+        if self.item in range(len(p.item)):
+            return "Item {0} ×{1} ({2})".format(identifier(p.item[self.item].name), self.amount, self.verb)
         else:
-            if not brute_force:
-                return stuff
+            return "Item variable ({0})".format(self.verb)
+
+class ObtainItemInstance(ItemInstance):
+    verb = 'obtained'
+
+class FindItemInstance(ItemInstance):
+    verb = 'found'
+
+class TrainerBattleInstance(Instance):
+    def __init__(self, type, id):
+        self.type = type
+        self.id = id
+    
+    def __str__(self):
+        return "Trainer({3}) {0} {1} [{2}]".format(p.trainer_class_name[p.trainer[self.id].trainer_class], p.trainer[self.id].name, ", ".join("{0} lv. {1}".format(identifier(p.pokemon_name[pokemon.species]), pokemon.level) for pokemon in p.trainer[self.id].party_pokemon), self.type)
+
+class WildBattleInstance(Instance):
+    def __init__(self, pokemon, level, item):
+        self.pokemon, self.level, self.item = pokemon, level, item
+    
+    def __str__(self):
+        return "Wild Pokémon {0} lv. {1} {2}".format(identifier(p.pokemon_name[self.pokemon]), self.level, (" holding "+identifier(p.item[self.item].name) if self.item else ""))
+
+class MartInstance(Instance):
+    def __init__(self, code, items, addr):
+        self.code, self.items, self.addr = code, items, addr
+    
+    def __str__(self):
+        return "Mart({0}) @{2} [{1}]".format(self.code, ", ".join(identifier(p.item[item].name) for item in self.items), hex(self.addr))
+
+class GivenPokemonInstance(Instance):
+    def __init__(self, pokemon, level=None, item=None):
+        self.pokemon, self.level, self.item = pokemon, level, item
+    
+    def __str__(self):
+        return "Given Pokémon {0} {1} {2}".format(identifier(p.pokemon_name[self.pokemon]), "lv. "+str(self.level) if self.level else "(egg)", (" holding "+identifier(p.item[self.item].name) if self.item else ""))
+
+class EndScript(): pass
+
+codes = {}
+params = {'byte': Byte, 'hword': ULInt16, 'word': ULInt32, '(byte)': Byte} # XXX
+with open('scriptcodes.csv') as f:
+    csv = csv.reader(f, delimiter=';')
+    for row in csv:
+        c = int(row[0], 16)
+        name = row[1]
+        pms = tuple(params[param](str(i)) for i, param in enumerate(row[2:]) if param)
+        codes[c] = Sequence(name, *pms)
+        #print hex(c), name, p
+
+codes[0x5c] = Sequence('trainerbattle', # Hardcoded due to variability
+    Byte('type'), 
+    ULInt16('id'),
+    ULInt16('0'),
+    If(lambda ctx: ctx.type not in (3,),
+        ULInt32('text')),
+    ULInt32('textafter'),
+    If(lambda ctx: ctx.type in (4, 7, 8),
+        ULInt32('textonlyonepkmn')),
+    If(lambda ctx: ctx.type in (1, 2, 8),
+        ULInt32('p_cont'))
+    )
+
+parsed_scripts = {}
+
+#TODO: Print debug statements if told to!
+def parse_script(rom, loc, brute_force=False):
+    stuff = []
+    gotolocs = []
+    def readbyte(): return ord(rom.read(1))
+    if loc in parsed_scripts.keys():
+        #print(" --- Script at {0} parsed before ---".format(hex(loc)))
+        return parsed_scripts[loc]
+    #def readshort(): return readbyte() + (readbyte() << 8)
+    #def readint(): return readbyte() + (readbyte() << 8) + (readbyte() << 16) + (readbyte() << 24)
+    try: rom.seek(loc)
+    except IOError:
+        #print ('faill!!!')
+        return []
+    mem = defaultdict(lambda: 0)
+    #print (" --- SCRIPT AT {0} ---".format(hex(loc)))
+    while True:
+        if EndScript in stuff:
+            parsed_scripts[loc] = stuff
+            return stuff
+        c = readbyte()
+        if c not in codes.keys():
+            #print(" ! UNKNOWN CODE: {0} !".format(hex(c)))
+            stuff.append(EndScript)
+            return stuff
+        code = codes[c]
+        cmd = code.parse_stream(rom)
+        #print code.name, " ".join(hex(a) for a in cmd if a)
+        if code.name == 'end':
+            stuff.append(EndScript)
+        elif code.name == 'return':
+            parsed_scripts[loc] = stuff
+            return stuff
+        elif code.name == 'call':
+            loc = rom.tell()
+            stuff += parse_script(rom, cmd[0]-0x8000000)
+            rom.seek(loc)
+        elif code.name == 'goto':
+            if cmd[0] in gotolocs:
+                #print(" ! Infinite script loop detected, aborting ! ")
+                stuff.append(EndScript)
+            else:
+                gotolocs.append(cmd[0])
+                try:
+                    rom.seek(cmd[0]-0x8000000)
+                except IOError: stuff.append(EndScript)
+        elif code.name == 'jumpstd':
+            # Oops, we dunno builtins...
+            stuff.append(EndScript)
+        elif code.name == 'killscript':
+            stuff.append(EndScript)
+        elif code.name == 'copyvarifnotzero':
+            mem[cmd[0]] = cmd[1]
+        elif code.name == 'callstd':
+            func = cmd[0]
+            if func == 0: stuff.append(ObtainItemInstance(mem))
+            elif func == 1: stuff.append(FindItemInstance(mem))
+        elif code.name == 'trainerbattle':
+            stuff.append(TrainerBattleInstance(cmd[0], cmd[1]-1)) # XXX why -1?, also two more args
+            if cmd[6]:
+                loc = rom.tell()
+                stuff += parse_script(rom, cmd[0]-0x8000000)
+                rom.seek(loc)
+        elif code.name == 'startwildbattle':
+            stuff.append(WildBattleInstance(cmd[0], cmd[1], 0))#, cmd[2]))
+        elif code.name in ('pokemart',):# 'pokemart2', 'pokemart3'):
+            loc = rom.tell()
+            rom.seek(cmd[0]-0x8000000)
+            items = filter(None, RepeatUntil(lambda obj, ctx: obj == 0, ULInt16('item')).parse_stream(rom))
+            rom.seek(loc)
+            stuff.append(MartInstance(code.name, items, cmd[0]))
+        elif code.name == 'givepokemon':
+            stuff.append(GivenPokemonInstance(cmd[0], cmd[1], cmd[2]))
+        elif code.name == 'giveegg':
+            stuff.append(GivenPokemonInstance(cmd[0]))
 
 
 class PokemonStringAdapter(Adapter):
@@ -310,7 +423,7 @@ TriggerEvent = Struct("triggerevent",
     ULInt16("variable"),
     ULInt16("value"),
     ULInt16("u1"),
-    ULInt32("script"),
+    ULInt32("p_script"),
 )
 
 SignEvent = Struct("signevent",
@@ -324,7 +437,7 @@ SignEvent = Struct("signevent",
             ULInt16("item"),
             Byte("id"), 
             Byte("amount")), # Doesn't seem to fit?
-        ULInt32("script"))
+        ULInt32("p_script"))
 )
 
 EventSet = Struct("event_set",
@@ -409,7 +522,7 @@ def identifier(name): return cap(name).replace(' ', '-').replace('.','').lower()
 def main(rom):
     f = open(rom, "rb")
     rom = f.read()
-    
+    global p
     p = ROM.parse(rom)
     #print( p.trainer)
     if mode == "print":
@@ -418,22 +531,23 @@ def main(rom):
             for i, map in enumerate(bank.headers):
                 print(" {0}.{1} {2}: {3} people".format(bank.bank_num, i, identifier(p.map_name[map.name].map_name), map.event_set.num_people))
                 for person in map.event_set.personevent:
-                    if person.sprite == 59:
-                        item = parse_script(f, person.p_script-0x8000000)
-                        if item and isinstance(item[0], ItemInstance):
-                            item = item[0]
-                            print("  [{0}, {1}]\t{2} ×{3}".format(person.xpos, person.ypos, identifier(p.item[item.item].name), item.amount))
-                    else:
-                        stuff = parse_script(f, person.p_script-0x8000000, brute_force=True)
-                        for thing in stuff:
-                            if isinstance(thing, ItemInstance) and thing.item in range(len(p.item)) and thing.item != 0:
-                                print("  [{0}, {1}]\t{2} ×{3} (from npc)".format(person.xpos, person.ypos, identifier(p.item[thing.item].name), thing.amount))
-                            elif isinstance(thing, TrainerBattleInstance) and thing.id in range(len(p.trainer)):
-                                print("  [{0}, {1}]\tTrainer {2} {3} [{4}]".format(person.xpos, person.ypos, p.trainer_class_name[p.trainer[thing.id].trainer_class], p.trainer[thing.id].name, ", ".join("{0} lv. {1}".format(identifier(p.pokemon_name[pokemon.species]), pokemon.level) for pokemon in p.trainer[thing.id].party_pokemon) ))
+                    stuff = parse_script(f, person.p_script-0x8000000)
+                    for thing in stuff:
+                        if isinstance(thing, Instance):
+                            print "  [{0}, {1}]\t".format(person.xpos, person.ypos), str(thing)
+                for trigger in map.event_set.triggerevent:
+                    stuff = parse_script(f, trigger.p_script-0x8000000)
+                    for thing in stuff:
+                        if isinstance(thing, Instance):
+                            print "  [{0}, {1}]T\t".format(trigger.xpos, trigger.ypos), str(thing)
                 for sign in map.event_set.signevent:
                     if sign.type in (5, 6, 7):
-                        print("  [{0}, {1}]\t{2} (hidden)".format(sign.xpos, sign.ypos, identifier(p.item[sign.data.item].name)))
-    
+                        print "  [{0}, {1}]H\t{2} (hidden)".format(sign.xpos, sign.ypos, identifier(p.item[sign.data.item].name))
+                    else:
+                        stuff = parse_script(f, sign.data-0x8000000)
+                        for thing in stuff:
+                            if isinstance(thing, Instance):
+                                print "  [{0}, {1}]S\t".format(trigger.xpos, trigger.ypos), str(thing)
     f.close()
 
 if __name__ == "__main__":
