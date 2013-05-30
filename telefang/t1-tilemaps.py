@@ -113,7 +113,7 @@ def compress_tmap(tmap):
     compressed += b'\xff'
     return compressed
 
-MODE = 'mediawiki'
+MODE = 'compress'
             
 BANK = 0x3e
 NUMTILEMAPS = 0xc3
@@ -171,7 +171,7 @@ if __name__ == '__main__':
             
     
     elif MODE=='compress':
-        lastloc = BANK*0x4000+0x200
+        '''lastloc = BANK*0x4000+0x200
         rom = open(rom, 'r+b')
         for i in range(NUMTILEMAPS):
             with open("tilemaps/{:02x}".format(i), 'rb') as f:
@@ -184,16 +184,16 @@ if __name__ == '__main__':
             print hex(i), len(tilemap), hex(lastloc)
             lastloc += len(tilemap)
         
-        rom.close()
+        rom.close()'''
             
             
         
         
         
-        #with open('tilemaps/0a_', 'rb') as f:
-        #    ctmap = compress_tmap(f.read())
-        #with open('tilemaps/0a.rle', 'wb') as f:
-        #    f.write(ctmap)
+        with open('tilemaps/0a', 'rb') as f:
+            ctmap = compress_tmap(f.read())
+        with open('tilemaps/0a.rle', 'wb') as f:
+            f.write(ctmap)
     
     
     print ("Done..!")
