@@ -13,7 +13,23 @@ class TextPtrAdapter(Adapter):
     
 
 Card = Struct("card",
-    Byte('type'),
+    Enum(Byte('type'),
+        fire_energy=8,
+        grass_energy=9,
+        lightning_energy=10,
+        water_energy=11,
+        fighting_energy=12,
+        psychic_energy=13,
+        double_colorless_enegry=14,
+        pokemon0=0,
+        pokemon1=1,
+        pokemon2=2,
+        pokemon3=3,
+        pokemon4=4,
+        pokemon5=5,
+        pokemon6=6,
+        trainer=16,
+        ),
     Short('gfx_pointer'),
     TextPtrAdapter(Short('name')),
     Byte('rarity'),
@@ -22,7 +38,7 @@ Card = Struct("card",
     Byte('hp'),
     Byte('stage'),
     Short('preevo_name_id'),
-    If(lambda ctx: ctx.type==1,
+    If(lambda ctx: ctx.type.startswith('pokemon'),
         Struct('pokemon_data', 
             Struct('moves',
                 Array(2,
@@ -33,8 +49,17 @@ Card = Struct("card",
                         ),
                         TextPtrAdapter(Short('name')),
                         TextPtrAdapter(Short('desc')),
+                        Byte('unk-1'),
+                        Byte('unk0'),
                         Byte('damage'),
-                        Padding(10)
+                        Byte('unk2'),
+                        Byte('unk3'),
+                        Byte('unk4'),
+                        Byte('unk5'),
+                        Byte('unk6'),
+                        Byte('unk7'),
+                        Byte('unk8'),
+                        Byte('unk9'),
                     ),
                 ),
             ),
@@ -59,14 +84,8 @@ with open('ptcg.gbc') as rom:
     for i in range(2990):
         rom.seek(0x34000+(i*3))
         ptr = rom.read(3)
-        #print hex(ULInt24('pointer!!!!').parse(ptr))
-        rom.seek(0x34000 + ULInt24('pointer!!!!').parse(ptr))
-        #print rom.read(50)
-        #try:
+        rom.seek(0x34000 + ULInt24('ptr').parse(ptr))
         text = CString('text').parse(rom.read(0x1000))
-        #    print i, text[1:]
-        #except construct.core.ArrayError:
-        #    pass
         texts.append(text)
     
     #exit()
@@ -75,7 +94,7 @@ with open('ptcg.gbc') as rom:
     for i in range(228):
         rom.seek(0x30c5e+(i*2))
         ptr = rom.read(2)
-        rom.seek(0x30000 + Short('pointer!!!!').parse(ptr)%0x4000)
+        rom.seek(0x30000 + Short('ptr').parse(ptr)%0x4000)
         card = Card.parse(rom.read(0xff))
         
         print card
