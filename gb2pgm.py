@@ -9,6 +9,8 @@ import os
 import sys
 import math
 
+WIDTH=4
+
 if len(sys.argv) != 2:
     sys.exit('usage: python3 gb2pgm.py file/directory')
 arg = sys.argv[1]
@@ -37,16 +39,16 @@ for f in files:
             tiles.append(tile)
             tile = []
             
-    height = (math.ceil(len(tiles)/16))*8
+    height = (math.ceil(len(tiles)/WIDTH))*8
     pgm = """P2
     #
     {} {}
     3
-    """.format(8*16, height)
+    """.format(8*WIDTH, height)
     for row in range(height):
-        for col in range(8*16):
+        for col in range(8*WIDTH):
             try:
-                pgm += str(tiles[16*(row//8)+(col//8)][8*(row%8)+(col%8)] ^ 0x03)+'\t'
+                pgm += str(tiles[WIDTH*(row//8)+(col//8)][8*(row%8)+(col%8)] ^ 0x03)+'\t'
             except IndexError:
                 pgm += '4\t'
         pgm += '\n'

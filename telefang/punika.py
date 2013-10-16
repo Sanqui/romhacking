@@ -21,6 +21,9 @@ class InvalidGraphicsError(BaseException):
 
 def readshort():
     return struct.unpack("<H", rom.read(2))[0]
+
+def readbeshort():
+    return struct.unpack(">H", rom.read(2))[0]
     
 def readbyte():
     return struct.unpack("<B", rom.read(1))[0]
@@ -134,6 +137,18 @@ if __name__ == '__main__':
             if g['target'] > 0x7fff and g['target'] < 0xa000 and g['pointer'] > 0x3fff and g['pointer'] < 0x8000:
                 graphics[i] = g
             rom.seek((0x39*0x4000)+0x306a+(i*0x4)+4)
+    elif game == b'MEDAROT5':
+        # This is just mugshots.
+        rom.seek((0x7b*0x4000)+0x040a)
+        for i in range(0xff):
+            g = {}
+            g['bank'] = readbyte()
+            g['pointer'] = readbeshort()
+            readbyte()
+            readbyte()
+            readbyte()
+            g['target'] = 0
+            graphics[i] = g
     elif game == b'CROC 2\0\0':
         # This game probably sets all offsets manually.  You're on your own here!  Check out RO3F:59F5 for starters.
         graphics = {0:{'bank': 0x3b, 'target': 0x8000, 'vrambank': 0x00, 'pointer': 0x5218},
