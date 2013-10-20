@@ -29,6 +29,7 @@
  00000030  51 05 00 ad 00 00 00 00  cb ed 00 e2 b8 59 01 f9 Q....... .....Y..
  00000040  69 1d 00 00 00 00 00 84                          i....... 
 '''
+ME = 0xc0a8a07e
 
 import sys
 from construct import *
@@ -37,13 +38,13 @@ Short = UBInt16
 Int = UBInt32
 
 XYP2PPacket = Struct("xyp2ppacket",
-    Bytes("magic0", 5),
-    #Magic("\x01\x00\x00\x01\x01"),
+    #Bytes("magic0", 5),
+    Magic("\x01\x00\x00\x01\x01"),
     Int("uniq0"),
     Int("uniq1"),
     Int("uniq2"),
-    Bytes("magic1", 3),
-    #Magic("\x08\x00\x45"),
+    #Bytes("magic1", 3),
+    Magic("\x08\x00\x45"),
     Short("state"),
     Byte("code"),
     Short("unk0"),
@@ -61,20 +62,26 @@ XYP2PPacket = Struct("xyp2ppacket",
     Short("checksum"),
     )
 
-codes = {53: "handshake", 85: "handshake2"}
+codes = {53: "handshake", 85: "handshake2", 101: "handshake3", 66: "conninfo_client", 106: "conninfo_host"}
 
 f = open(sys.argv[1])
-for i in range(8):
+i = 0
+for i in range(400):
     bytes = f.read(0x2f)
     header = XYP2PPacket.parse(bytes)
     length = header.length - 8
-    print "header:"
-    print(header)
+    #print "header:"
+    #print(header)
+    name = "?"
     if header.code in codes:
-        print "code {} = {}".format(header.code, codes[header.code])
-    print "packet body:"
+        name = codes[header.code]
+    print "{}packet - from {:08x}, to {:08x}, via {:08x}, packet code {:03} (0x{:02x}, {}), {:03x} bytes".format(">>" if header['from'] == ME else "<<", header['from'], header.to, header.transaction, header.code, header.code, name, length)
+    #print "packet body:"
+    body0 = f.read(length)
     body1 = f.read(length)
-    body2 = f.read(length)
-    assert body1 == body2
-    print body1.encode('hex')
-    print body1
+    print "  "+body0.encode('hex')
+    #print "  "+body1.encode('hex')
+    #if name in "conninfo ".split():
+    print "  ascii in body: "+"".join(x for x in body0 if ord(x) in range(0x20, 0x7f)) 
+    assert body0 == body1
+    #print body0
