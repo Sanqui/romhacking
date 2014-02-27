@@ -30,6 +30,18 @@ mode = "print"
 mapcounts = [54, 5, 5, 6, 7, 7, 8, 7, 7, 13, 8, 17, 10, 24, 13, 13, 14, 2, 2,
              2, 3, 1, 1, 1, 86, 44, 12, 2, 1, 13, 1, 1, 3]
 
+areanames = defaultdict(lambda: {})
+with open('location-area-names') as n:
+    for line in n.readlines():
+        if '.' in line:
+            areanames[int(line.split('.')[0])][int(line.split('.')[1].split(' ')[0])] = line[line.find(' ')+1:].strip()
+
+def get_area_name(x, y):
+    if x in areanames.keys():
+        if y in areanames[x].keys():
+            return areanames[x][y]
+    return ""
+
 class Instance(): pass
 # TODO make these namedtuples
 class ItemInstance(Instance):
@@ -56,7 +68,7 @@ class TrainerBattleInstance(Instance):
         self.id = id
     
     def __str__(self):
-        return "Trainer({3}) {0} {1} [{2}]".format(p.trainer_class_name[p.trainer[self.id].trainer_class], p.trainer[self.id].name, ", ".join("{0} lv. {1}".format(identifier(p.pokemon_name[pokemon.species]), pokemon.level) for pokemon in p.trainer[self.id].party_pokemon), self.type)
+        return "Trainer({3}) {0} {1} [{2}] [items: {4}]".format(p.trainer_class_name[p.trainer[self.id].trainer_class], p.trainer[self.id].name, ", ".join("{0} lv. {1}".format(identifier(p.pokemon_name[pokemon.species]), pokemon.level) for pokemon in p.trainer[self.id].party_pokemon), self.type, ", ".join(str(i) for i in p.trainer[self.id].item if i))
 
 class WildBattleInstance(Instance):
     def __init__(self, pokemon, level, item):
@@ -70,7 +82,7 @@ class MartInstance(Instance):
         self.code, self.items, self.addr = code, items, addr
     
     def __str__(self):
-        return "Mart({0}) @{2} [{1}]".format(self.code, ", ".join(identifier(p.item[item].name) for item in self.items), hex(self.addr))
+        return "Mart [{1}]".format(self.code, ", ".join(identifier(p.item[item].name) for item in self.items), hex(self.addr))
 
 class GivenPokemonInstance(Instance):
     def __init__(self, pokemon, level=None, item=None):
@@ -108,51 +120,64 @@ codes[0x5c] = Sequence('trainerbattle', # Hardcoded due to variability
 parsed_scripts = {}
 
 #TODO: Print debug statements if told to!
-def parse_script(rom, loc, brute_force=False):
+def parse_script(rom, loc, brute_force=False, gotolocs=[], debug=False):
     stuff = []
-    gotolocs = []
     def readbyte(): return ord(rom.read(1))
     if loc in parsed_scripts.keys():
-        #print(" --- Script at {0} parsed before ---".format(hex(loc)))
+        if debug: print(" --- Script at {0} parsed before ---".format(hex(loc)))
         return parsed_scripts[loc]
     #def readshort(): return readbyte() + (readbyte() << 8)
     #def readint(): return readbyte() + (readbyte() << 8) + (readbyte() << 16) + (readbyte() << 24)
     try: rom.seek(loc)
     except IOError:
-        #print ('faill!!!')
+        if debug: print ('faill!!!')
         return []
     mem = defaultdict(lambda: 0)
-    #print (" --- SCRIPT AT {0} ---".format(hex(loc)))
+    if debug: print (" --- SCRIPT AT {0} ---".format(hex(loc)))
     while True:
         if EndScript in stuff:
             parsed_scripts[loc] = stuff
             return stuff
         c = readbyte()
         if c not in codes.keys():
-            #print(" ! UNKNOWN CODE: {0} !".format(hex(c)))
+            if debug: print(" ! UNKNOWN CODE: {0} !".format(hex(c)))
             stuff.append(EndScript)
             return stuff
         code = codes[c]
         cmd = code.parse_stream(rom)
-        #print code.name, " ".join(hex(a) for a in cmd if a)
+        if debug: print code.name, " ".join(hex(a) for a in cmd if a)
         if code.name == 'end':
             stuff.append(EndScript)
         elif code.name == 'return':
             parsed_scripts[loc] = stuff
             return stuff
         elif code.name == 'call':
-            loc = rom.tell()
+            tmploc = rom.tell()
             stuff += parse_script(rom, cmd[0]-0x8000000)
-            rom.seek(loc)
+            rom.seek(tmploc)
         elif code.name == 'goto':
             if cmd[0] in gotolocs:
-                #print(" ! Infinite script loop detected, aborting ! ")
-                stuff.append(EndScript)
+                if debug: print(" ! Infinite script loop detected, aborting ! ")
+                #stuff.append(EndScript)
             else:
                 gotolocs.append(cmd[0])
                 try:
                     rom.seek(cmd[0]-0x8000000)
                 except IOError: stuff.append(EndScript)
+        elif code.name == 'ifgoto': # THIS IS CAUSING SOME THINGS NOT TO APPEAR XXX
+            # We need to parse all branches.
+            if cmd[1] not in gotolocs:
+                #gotolocs.append(cmd[1])
+                if loc != cmd[1]-0x8000000:
+                    tmploc = rom.tell()
+                    stuff += parse_script(rom, cmd[1]-0x8000000)
+                    rom.seek(tmploc)
+            else:
+                if debug: print (" ! Infinite conditional recursion detected, aborting ! ")
+        elif code.name == 'ifcall':
+            tmploc = rom.tell()
+            stuff += parse_script(rom, cmd[1]-0x8000000)
+            rom.seek(tmploc)
         elif code.name == 'jumpstd':
             # Oops, we dunno builtins...
             stuff.append(EndScript)
@@ -160,8 +185,8 @@ def parse_script(rom, loc, brute_force=False):
             stuff.append(EndScript)
         elif code.name == 'copyvarifnotzero':
             mem[cmd[0]] = cmd[1]
-        elif code.name == 'callstd':
-            func = cmd[0]
+        elif code.name in ('callstd', 'callstdif'):
+            func = cmd[0] if code.name == 'callstd' else cmd[1]
             if func == 0: stuff.append(ObtainItemInstance(mem))
             elif func == 1: stuff.append(FindItemInstance(mem))
         elif code.name == 'trainerbattle':
@@ -171,7 +196,7 @@ def parse_script(rom, loc, brute_force=False):
                 stuff += parse_script(rom, cmd[0]-0x8000000)
                 rom.seek(loc)
         elif code.name == 'startwildbattle':
-            stuff.append(WildBattleInstance(cmd[0], cmd[1], 0))#, cmd[2]))
+            stuff.append(WildBattleInstance(cmd[0], cmd[1], cmd[2]))
         elif code.name in ('pokemart',):# 'pokemart2', 'pokemart3'):
             loc = rom.tell()
             rom.seek(cmd[0]-0x8000000)
@@ -529,7 +554,7 @@ def main(rom):
         for bank in p.map_bank_table.banks:
             print("Bank {0}, has {1} maps".format(bank.bank_num, len(bank.headers)))
             for i, map in enumerate(bank.headers):
-                print(" {0}.{1} {2}: {3} people".format(bank.bank_num, i, identifier(p.map_name[map.name].map_name), map.event_set.num_people))
+                print(" {0}.{1}: {2} {3}: {4} people".format(bank.bank_num, i, identifier(p.map_name[map.name].map_name), identifier(get_area_name(bank.bank_num, i)), map.event_set.num_people))
                 for person in map.event_set.personevent:
                     stuff = parse_script(f, person.p_script-0x8000000)
                     for thing in stuff:
@@ -542,7 +567,7 @@ def main(rom):
                             print "  [{0}, {1}]T\t".format(trigger.xpos, trigger.ypos), str(thing)
                 for sign in map.event_set.signevent:
                     if sign.type in (5, 6, 7):
-                        print "  [{0}, {1}]H\t{2} (hidden)".format(sign.xpos, sign.ypos, identifier(p.item[sign.data.item].name))
+                        print "  [{0}, {1}]H\tItem {2} (hidden)".format(sign.xpos, sign.ypos, identifier(p.item[sign.data.item].name))
                     else:
                         stuff = parse_script(f, sign.data-0x8000000)
                         for thing in stuff:

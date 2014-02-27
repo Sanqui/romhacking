@@ -180,7 +180,7 @@ B2;dummy;;;;;;;
 B3;checkcoins;hword;;;;;;
 B4;givecoins;hword;;;;;;
 B5;removecoins;hword;;;;;;
-B6;startwildbattle;hword;hword;;;;
+B6;startwildbattle;hword;byte;hword;;;
 B7;repeatwildbattle;;;;;;;
 B8;setvirtualaddress;word;;;;;;
 B9;virtualjump;word;;;;;;
