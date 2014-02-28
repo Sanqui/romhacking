@@ -78,7 +78,7 @@ graphics = {}
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        sys.exit('usage: python3 punika2.py rom.gbc')
+        sys.exit('usage: python3 puneedle.py rom.gbc')
     rom = sys.argv[1]
 
     if not os.path.exists('g2'+os.sep):
@@ -104,7 +104,7 @@ if __name__ == '__main__':
                 print("Not OK:", str(ex))
             else:
                 print("OK")
-                with open("g2/{}-{}.gba".format(i, hex(l)), 'bw') as f:
+                with open("g2/{:04}-{}.gba".format(i, hex(l)), 'bw') as f:
                     f.write(g)
                 i += 1
                 
