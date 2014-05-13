@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+#include <getopt.h>
 
 int i;
 int matched;
@@ -7,10 +9,10 @@ unsigned char off;
 int c;
 char* string;
 int string_len;
-int pos = 0;
+char* filename;
 FILE *fp;
 
-int match_string(int is16bit) {
+int match_string(bool is16bit) {
     off = string[0] - c;
     
     matched = 1;
@@ -20,7 +22,7 @@ int match_string(int is16bit) {
         matched++;
     }
     if (matched == string_len) {
-        printf(" %d-bit string found at pos 0x%x, offset by 0x%x\n", is16bit ? 16 : 8, pos, off);
+        printf("%s-bit string found in file %s, pos 0x%x, offset by 0x%x\n", is16bit ? "16" : " 8", filename, ftell(fp)-i, off);
         i--;
     }
     
@@ -31,17 +33,24 @@ int match_string(int is16bit) {
 
 int main(int argc, char *argv[]) {
     int argi;
-    char* filename;
+    bool verbose = false;
     
-    if (argc < 3) {
-        printf("Usage: ./relative_search string file [...]\n");
+    while ((c = getopt (argc, argv, "v")) != -1) {
+        switch (c) {
+            case 'v':
+                verbose = true;
+                break;
+        }
+    }
+    if (argc - optind < 2) {
+        printf("Usage: ./relative_search (-v) string file [...]\n");
         return 1;
     }
-    string = argv[1];
+    string = argv[optind];
     string_len = strlen(string);
-    for (argi=2; argi < argc; argi++) {
+    for (argi=optind+1; argi < argc; argi++) {
         filename = argv[argi];
-        printf("Looking for string %s in %s\n", string, filename);
+        if (verbose) printf("Looking for string %s in %s\n", string, filename);
         
         fp = fopen(filename, "rb");
         
@@ -51,10 +60,8 @@ int main(int argc, char *argv[]) {
         }
         
         while((c = fgetc(fp)) != EOF) {
-            match_string(0);
-            match_string(1);
-            
-            pos++;
+            match_string(false);
+            match_string(true);
         }
     }
     
