@@ -157,15 +157,27 @@ if __name__ == '__main__':
         os.quit('Unsupported ROM.')
     
     if action == 'list':
+        locs = {}
         for i, g in graphics.items():
-            rom.seek(abspointer(g['bank'], g['pointer']))
+            addr = abspointer(g['bank'], g['pointer'])
+            rom.seek(addr)
             compressed = readbyte()
             total = readshort()
-            print ("{:>4} - bank {:>4} + {:>8} ({:>8}), {} bytes {} read in {:>7}".format(hex(i),
-            hex(g['bank']), 
-            hex(g['pointer']), 
-            hex(abspointer(g['bank'], g['pointer'])), hex(total), "compressed" if compressed else "not compressed", hex(g['target'])))
-    
+            decompress(addr)
+            locs[abspointer(g['bank'], g['pointer'])] = rom.tell() - addr
+            print ("{:>2x} - bank {:02x}:{:04x} (0x{:>06x}), 0x{:>3x} bytes {} read in {:04x}".format(
+            i, g['bank'], g['pointer'], abspointer(g['bank'], g['pointer']), total, "compressed" if compressed else "not compressed", g['target']))
+        lastbank = None
+        lastend = None
+        for loc in sorted(locs.keys()):
+            total = locs[loc]
+            bank = loc // 0x4000
+            if bank == lastbank:
+                if loc - lastend != 0:
+                    print("{:>4x} bytes between compressed gfx at {:>6x} (bank {:02x})".format(loc-lastend, loc, bank))
+            lastbank = bank
+            lastend = loc + total
+            
     elif action == 'extract':
         for gi, g in graphics.items():
             l = abspointer(g['bank'], g['pointer'])

@@ -113,18 +113,23 @@ def compress_tmap(tmap):
     compressed += b'\xff'
     return compressed
 
-MODE = 'compress'
-            
-BANK = 0x3e
-NUMTILEMAPS = 0xc3
+MODE = ('dump', 'mediawiki', 'compress')[1]
+SET = ('tilemaps', 'attrmaps')[1]
+
+if SET == 'tilemaps':
+    BANK = 0x3e
+    NUMTILEMAPS = 0xc3
+elif SET == 'attrmaps':
+    BANK = 0x08
+    NUMTILEMAPS = 0xC3
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         sys.exit('usage: python3 t1-tilemaps.py rom.gbc')
     rom = sys.argv[1]
 
-    if not os.path.exists('tilemaps'+os.sep):
-        os.makedirs('tilemaps')
+    if not os.path.exists(SET+os.sep):
+        os.makedirs(SET)
     
     if MODE == 'dump' or MODE == 'mediawiki':
         
@@ -161,7 +166,10 @@ if __name__ == '__main__':
                 print "<pre>"
                 column = 0
                 for byte in tmap:
-                    print "{:02x}".format(ord(byte)),
+                    if SET == 'attrmaps':
+                        print "{:01x}".format(ord(byte)),
+                    else:
+                        print "{:02x}".format(ord(byte)),
                     column += 1
                     if column == 0x20 or byte == "\xfe":
                         print
