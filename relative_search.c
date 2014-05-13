@@ -4,8 +4,9 @@
 int i;
 int matched;
 unsigned char off;
-char c;
+int c;
 char* string;
+int string_len;
 int pos = 0;
 FILE *fp;
 
@@ -13,12 +14,12 @@ int match_string(int is16bit) {
     off = string[0] - c;
     
     matched = 1;
-    for (i=1; i<strlen(string); i++) {
+    for (i=1; i<string_len; i++) {
         if (is16bit) fgetc(fp);
         if ((unsigned char)(string[i] - fgetc(fp)) != off) break;
         matched++;
     }
-    if (matched == strlen(string)) {
+    if (matched == string_len) {
         printf(" %d-bit string found at pos 0x%x, offset by 0x%x\n", is16bit ? 16 : 8, pos, off);
         i--;
     }
@@ -37,6 +38,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     string = argv[1];
+    string_len = strlen(string);
     for (argi=2; argi < argc; argi++) {
         filename = argv[argi];
         printf("Looking for string %s in %s\n", string, filename);
@@ -49,8 +51,6 @@ int main(int argc, char *argv[]) {
         }
         
         while((c = fgetc(fp)) != EOF) {
-            off = string[0] - c;
-            
             match_string(0);
             match_string(1);
             
