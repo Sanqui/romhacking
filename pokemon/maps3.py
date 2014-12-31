@@ -2,6 +2,8 @@
 import csv
 from collections import defaultdict
 from construct import *
+Short = ULInt16
+Int = ULInt32
 
 def LBitStruct(*args):
     """Construct's bit structs read a byte at a time in the order they appear,
@@ -43,6 +45,14 @@ def get_area_name(x, y):
     return ""
 
 class Instance(): pass
+
+class TextInstance(Instance):
+    def __init__(self, text):
+        self.text = text
+    
+    def __str__(self):
+        return "Text: {}".format(self.text)
+
 # TODO make these namedtuples
 class ItemInstance(Instance):
     verb = "gotten"
@@ -135,12 +145,14 @@ def parse_script(rom, loc, brute_force=False, gotolocs=[], debug=False):
     mem = defaultdict(lambda: 0)
     if debug: print (" --- SCRIPT AT {0} ---".format(hex(loc)))
     while True:
-        if EndScript in stuff:
+        if EndScript in stuff or rom.tell() in parsed_scripts.keys():
+            if EndScript in stuff: stuff.remove(EndScript)
             parsed_scripts[loc] = stuff
             return stuff
         c = readbyte()
         if c not in codes.keys():
             if debug: print(" ! UNKNOWN CODE: {0} !".format(hex(c)))
+            # This actually happens in 0x1ae438
             stuff.append(EndScript)
             return stuff
         code = codes[c]
@@ -158,19 +170,20 @@ def parse_script(rom, loc, brute_force=False, gotolocs=[], debug=False):
         elif code.name == 'goto':
             if cmd[0] in gotolocs:
                 if debug: print(" ! Infinite script loop detected, aborting ! ")
-                #stuff.append(EndScript)
+                stuff.append(EndScript)
             else:
                 gotolocs.append(cmd[0])
                 try:
                     rom.seek(cmd[0]-0x8000000)
                 except IOError: stuff.append(EndScript)
-        elif code.name == 'ifgoto': # THIS IS CAUSING SOME THINGS NOT TO APPEAR XXX
+        elif code.name == 'ifgoto':
             # We need to parse all branches.
             if cmd[1] not in gotolocs:
-                #gotolocs.append(cmd[1])
+                gotolocs.append(cmd[1])
                 if loc != cmd[1]-0x8000000:
                     tmploc = rom.tell()
                     stuff += parse_script(rom, cmd[1]-0x8000000)
+                    #print parsed_scripts
                     rom.seek(tmploc)
             else:
                 if debug: print (" ! Infinite conditional recursion detected, aborting ! ")
@@ -189,6 +202,22 @@ def parse_script(rom, loc, brute_force=False, gotolocs=[], debug=False):
             func = cmd[0] if code.name == 'callstd' else cmd[1]
             if func == 0: stuff.append(ObtainItemInstance(mem))
             elif func == 1: stuff.append(FindItemInstance(mem))
+            elif func in (2, 3, 4, 5, 6):
+                try:
+                    tmploc = rom.tell()
+                    rom.seek(pointer-0x8000000)
+                    text = PokemonStringAdapter(CString('text', terminators='\xfd')).parse_stream(rom)
+                    stuff.append(TextInstance(text))
+                    rom.seek(tmploc)
+                except IOError:
+                    # e-reader?
+                    pass
+        elif code.name == 'msgbox2':
+            tmploc = rom.tell()
+            rom.seek(cmd[0]-0x8000000)
+            text = PokemonStringAdapter(CString('text', terminators='\xfd')).parse_stream(rom)
+            stuff.append(TextInstance(text))
+            rom.seek(tmploc)
         elif code.name == 'trainerbattle':
             stuff.append(TrainerBattleInstance(cmd[0], cmd[1]-1)) # XXX why -1?, also two more args
             if cmd[6]:
@@ -207,6 +236,8 @@ def parse_script(rom, loc, brute_force=False, gotolocs=[], debug=False):
             stuff.append(GivenPokemonInstance(cmd[0], cmd[1], cmd[2]))
         elif code.name == 'giveegg':
             stuff.append(GivenPokemonInstance(cmd[0]))
+        elif code.name == 'loadpointer':
+            pointer = cmd[1]
 
 
 class PokemonStringAdapter(Adapter):
@@ -298,11 +329,11 @@ class PokemonStringAdapter(Adapter):
     0xED: 'y',
     0xEE: 'z',
     0xF0: ':',
-    0xFA: '=',
+    0xFA: '\\',
     0xFB: '*',
-    0xFC: '\n',
+    0xFC: '=',
     0xFD: '@',
-    0xFE: '+',} # TODO make this more unicodish
+    0xFE: '\\\\',} # TODO make this more unicodish
     def _encode(self, obj, context):
         return None # TODO
     def _decode(self, obj, c):
@@ -484,6 +515,19 @@ EventSet = Struct("event_set",
         Array(lambda ctx: ctx.num_signs, SignEvent)),
 )
 
+MapScriptHeader = Struct("map_script_header",
+    Short("flag"),
+    Short("value"),
+    Int("p_script")
+)
+
+MapScript = Struct("map_script",
+    Byte("type"),
+    ULInt32("p_map_script_header"),
+    Pointer(lambda ctx: ctx.p_map_script_header-0x8000000,
+        MapScriptHeader)
+)
+
 MapHeader = Struct("map_header",
     ULInt32("p_map"),
     ULInt32("p_event_set"),
@@ -500,6 +544,8 @@ MapHeader = Struct("map_header",
     Byte("display_name"),
     Byte("battle_type"),
     Pointer(lambda ctx: ctx.p_event_set-0x8000000, EventSet),
+    Pointer(lambda ctx: ctx.p_scripts-0x8000000,
+        OptionalGreedyRange(MapScript)),
 )
 
 MapBank = Struct("map_bank",
@@ -519,42 +565,62 @@ MapBankTable = Struct("map_bank_table",
         Embed(Pointer(lambda ctx: ctx.p_bank-0x8000000, MapBank))))
 )
 
+ruby =     {'items': 0x3C5580, 'trainers': 0x1f053c, 'pokemon_names': 0x1f7184,
+        'trainer_class_names': 0x1f0220, 'map_names': 0x3e73e0, 'map_bank_table': 0x3085A0}
+
+sapphire = {'items': 0x3c55dc, 'trainers': 0x1f04cc, 'pokemon_names': 0x1f7114,
+        'trainer_class_names': 0x1f01b0, 'map_names': 0x3e743c, 'map_bank_table': 0x308530}
+
+pointers = ruby
+
 ROM = Struct("rom",
     #Pointer(lambda ctx: 0x3e7010,
     #    Array(lambda ctx:79, PokemonStringAdapter(CString('map_name', terminators="\xff")))),
-    Pointer(lambda ctx:0x3C5580,
+    Pointer(lambda ctx: pointers['items'],
         GreedyRange(Item)
     ),
-    Pointer(lambda ctx:0x1f053c,
+    Pointer(lambda ctx: pointers['trainers'],
         GreedyRange(Trainer)),
-    Pointer(lambda ctx:0x1f7184,
+    Pointer(lambda ctx: pointers['pokemon_names'],
         Array(412, PokemonStringAdapter(String('pokemon_name', 11)))),
-    Pointer(lambda ctx:0x1f0220,
+    Pointer(lambda ctx: pointers['trainer_class_names'],
         Array(60, PokemonStringAdapter(String('trainer_class_name', 13)))),
-    Pointer(lambda ctx:0x3e73e0,
+    Pointer(lambda ctx: pointers['map_names'],
         GreedyRange(Struct('map_name',
             ULInt32("unk"),
             ULInt32("p_map_name"),
             Pointer(lambda ctx: ctx.p_map_name-0x8000000, PokemonStringAdapter(CString('map_name', terminators="\xff")))))),
             
-    Pointer(lambda ctx: 0x3085A0, #0x307f78, #0x308588, 0x3085A0
+    Pointer(lambda ctx: pointers['map_bank_table'], #0x307f78, #0x308588, 0x3085A0
         MapBankTable)
 )
 
 def cap(name): return name.replace('\n','').replace('  ',' ').title()
-def identifier(name): return cap(name).replace(' ', '-').replace('.','').lower()
+def identifier(name): return cap(name).replace(' ', '-').replace('.','').replace('=', '').lower()
 
 def main(rom):
     f = open(rom, "rb")
     rom = f.read()
     global p
     p = ROM.parse(rom)
+    
+    #parse_script(f, 0x163dec)
+    #return
     #print( p.trainer)
     if mode == "print":
         for bank in p.map_bank_table.banks:
             print("Bank {0}, has {1} maps".format(bank.bank_num, len(bank.headers)))
             for i, map in enumerate(bank.headers):
                 print(" {0}.{1}: {2} {3}: {4} people".format(bank.bank_num, i, identifier(p.map_name[map.name].map_name), identifier(get_area_name(bank.bank_num, i)), map.event_set.num_people))
+                for i, script in enumerate(map.map_script):
+                    if script.type == 0: break
+                    if script.type in (2, 4): ptr = script.map_script_header.p_script-0x8000000
+                    else: ptr = script.p_map_script_header-0x8000000
+                    stuff = parse_script(f, ptr)
+                    for thing in stuff:
+                        if isinstance(thing, Instance):
+                            print "  [Map script #{}]\t".format(i), str(thing)
+                    
                 for person in map.event_set.personevent:
                     stuff = parse_script(f, person.p_script-0x8000000)
                     for thing in stuff:
