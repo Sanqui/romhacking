@@ -23,14 +23,30 @@ def LBitStruct(*args):
         resizer=lambda _: _,
     )
 
+
+# Amounts of maps in each bank.  As far as I know, this information doesn't
+# exist in the rom, so I stole it shamelessly from Advancemap.
+rs_mapcounts = [54, 5, 5, 6, 7, 7, 8, 7, 7, 13, 8, 17, 10, 24, 13, 13, 14, 2, 2,
+             2, 3, 1, 1, 1, 86, 44, 12, 2, 1, 13, 1, 1, 3, 1]
+
+ruby =     {'items': 0x3C5580, 'trainers': 0x1f053c, 'pokemon_names': 0x1f7184,
+        'trainer_class_names': 0x1f0220, 'map_names': 0x3e73e0, 'map_bank_table': 0x3085A0,
+        'mapcounts': rs_mapcounts}
+
+sapphire = {'items': 0x3c55dc, 'trainers': 0x1f04cc, 'pokemon_names': 0x1f7114,
+        'trainer_class_names': 0x1f01b0, 'map_names': 0x3e743c, 'map_bank_table': 0x308530,
+        'mapcounts': rs_mapcounts}
+fire_red = {'items': 0x3DB028, 'trainers': 0x23EAF1, 'pokemon_names': 0x245EE0 	,
+        'trainer_class_names': 0x23E558, 'map_names': 0x3e743c, 'map_bank_table': 0x3526A8,
+        'mapcounts': [1]}
+        
+game = 'ruby'
+pointers = locals()[game]
+
 mode = "print"
 #if mode == "import":
 #    from pokedex.db import connect, tables, util
 
-# Amounts of maps in each bank.  As far as I know, this information doesn't
-# exist in the rom, so I stole it shamelessly from Advancemap.
-mapcounts = [54, 5, 5, 6, 7, 7, 8, 7, 7, 13, 8, 17, 10, 24, 13, 13, 14, 2, 2,
-             2, 3, 1, 1, 1, 86, 44, 12, 2, 1, 13, 1, 1, 3]
 
 areanames = defaultdict(lambda: {})
 with open('location-area-names') as n:
@@ -207,7 +223,7 @@ def parse_script(rom, loc, brute_force=False, gotolocs=[], debug=False):
                     tmploc = rom.tell()
                     rom.seek(pointer-0x8000000)
                     text = PokemonStringAdapter(CString('text', terminators='\xfd')).parse_stream(rom)
-                    stuff.append(TextInstance(text))
+                    #stuff.append(TextInstance(text))
                     rom.seek(tmploc)
                 except IOError:
                     # e-reader?
@@ -216,7 +232,7 @@ def parse_script(rom, loc, brute_force=False, gotolocs=[], debug=False):
             tmploc = rom.tell()
             rom.seek(cmd[0]-0x8000000)
             text = PokemonStringAdapter(CString('text', terminators='\xfd')).parse_stream(rom)
-            stuff.append(TextInstance(text))
+            #stuff.append(TextInstance(text))
             rom.seek(tmploc)
         elif code.name == 'trainerbattle':
             stuff.append(TrainerBattleInstance(cmd[0], cmd[1]-1)) # XXX why -1?, also two more args
@@ -405,7 +421,9 @@ PartyPokemon = Struct("party_pokemon",
 )
 
 Trainer = Struct("trainer",
-    Byte("party_type"),
+    If(lambda ctx: game!="fire_red",
+        Byte("party_type")
+    ),
     Byte("trainer_class"),
     Embed(LBitStruct("gender_and_music",
         Bit('gender'),
@@ -449,8 +467,8 @@ WarpEvent = Struct("warpevent",
     ULInt16("ypos"),
     Byte("kind"),
     Byte("dest_warp"),
-    Byte("dest_bank"),
     Byte("dest_map"),
+    Byte("dest_bank"),
 )
 
 '''Enum(Byte("kind"),
@@ -528,6 +546,29 @@ MapScript = Struct("map_script",
         MapScriptHeader)
 )
 
+Connection = Struct("connection",
+    Enum(Int("direction"),
+        no_connection = 0,
+        down = 1,
+        up = 2,
+        left = 3,
+        right = 3,
+        dive = 5,
+        emerge = 6,
+        ),
+    Int("offset"),
+    Byte("map_bank"),
+    Byte("map_number"),
+)
+
+Connections = Struct("connections",
+    Int("num_connections"),
+    Array(lambda ctx: ctx.num_connections,
+        Struct("connections", ULInt32("p_connection"),
+        Embed(Pointer(lambda ctx: ctx.p_connection-0x8000000, Connection)))
+    )
+)
+
 MapHeader = Struct("map_header",
     ULInt32("p_map"),
     ULInt32("p_event_set"),
@@ -546,13 +587,16 @@ MapHeader = Struct("map_header",
     Pointer(lambda ctx: ctx.p_event_set-0x8000000, EventSet),
     Pointer(lambda ctx: ctx.p_scripts-0x8000000,
         OptionalGreedyRange(MapScript)),
+    #Pointer(lambda ctx: ctx.p_connections-0x8000000, Connections),
 )
 
 MapBank = Struct("map_bank",
-    Array(lambda ctx: mapcounts[ctx.bank_num],
+    Array(lambda ctx: pointers['mapcounts'][ctx.bank_num],
         Struct("headers", ULInt32("p_header"),
         Embed(Pointer(lambda ctx: ctx.p_header-0x8000000, MapHeader))))
 )
+
+
 
 def inc_bank(ctx):
     ctx._.banks += 1
@@ -560,18 +604,12 @@ def inc_bank(ctx):
 
 MapBankTable = Struct("map_bank_table",
     Value('banks', lambda ctx: 0), # A hack.
-    Array(len(mapcounts),
+    Array(len(pointers['mapcounts']),
         Struct("banks", Value('bank_num', inc_bank), ULInt32("p_bank"),
         Embed(Pointer(lambda ctx: ctx.p_bank-0x8000000, MapBank))))
 )
 
-ruby =     {'items': 0x3C5580, 'trainers': 0x1f053c, 'pokemon_names': 0x1f7184,
-        'trainer_class_names': 0x1f0220, 'map_names': 0x3e73e0, 'map_bank_table': 0x3085A0}
 
-sapphire = {'items': 0x3c55dc, 'trainers': 0x1f04cc, 'pokemon_names': 0x1f7114,
-        'trainer_class_names': 0x1f01b0, 'map_names': 0x3e743c, 'map_bank_table': 0x308530}
-
-pointers = ruby
 
 ROM = Struct("rom",
     #Pointer(lambda ctx: 0x3e7010,
@@ -603,6 +641,9 @@ def main(rom):
     rom = f.read()
     global p
     p = ROM.parse(rom)
+    
+    #print p.trainer
+    #return
     
     #parse_script(f, 0x163dec)
     #return
@@ -639,6 +680,13 @@ def main(rom):
                         for thing in stuff:
                             if isinstance(thing, Instance):
                                 print "  [{0}, {1}]S\t".format(trigger.xpos, trigger.ypos), str(thing)
+                for warp in map.event_set.warpevent:
+                    try:
+                        m = p.map_bank_table.banks[warp.dest_bank].headers[warp.dest_map] 
+                        print "  [{}, {}]\tWarp to {}.{}:{} ({} {})".format(warp.xpos, warp.ypos, warp.dest_bank, warp.dest_map, warp.dest_warp,
+                        identifier(p.map_name[m.name].map_name), identifier(get_area_name(warp.dest_bank, warp.dest_map)))
+                    except IndexError:
+                        print "  [{}, {}]\tWarp to {}.{}:{}".format(warp.xpos, warp.ypos, warp.dest_bank, warp.dest_map, warp.dest_warp)
     f.close()
 
 if __name__ == "__main__":
