@@ -1,0 +1,100 @@
+; ROM routines
+00:335e FarCall01to02
+00:3365 FarCall01to03
+00:336c FarCall01to04
+00:3373 FarCall01to05
+00:337a FarCall01to06
+00:3381 FarCall01to07
+
+00:3391 FarCall02to01
+00:3398 FarCall02to03
+00:339f FarCall02to04
+00:33a6 FarCall02to05
+00:33ad FarCall02to06
+00:33b4 FarCall02to07
+
+00:33c4 FarCall03to01
+00:33cb FarCall03to02
+00:33d2 FarCall03to04
+00:33d9 FarCall03to05
+00:33e0 FarCall03to06
+00:33e7 FarCall03to07
+
+00:33f7 FarCall04to07
+00:33fe FarCall04to06
+00:3405 FarCall04to05
+00:340c FarCall04to03
+00:3413 FarCall04to02
+00:341a FarCall04to01
+
+00:342c FarCall05to01
+00:3433 FarCall05to02
+00:343a FarCall05to03
+00:3441 FarCall05to04
+00:3448 FarCall05to06
+00:344f FarCall05to07
+
+00:345f FarCall06to01
+00:3466 FarCall06to02
+00:346d FarCall06to03
+00:3474 FarCall06to04
+00:347b FarCall06to05
+00:3482 FarCall06to07
+
+00:3492 FarCall07to01
+00:3499 FarCall07to02
+00:34a0 FarCall07to03
+00:34a7 FarCall07to04
+00:34ae FarCall07to05
+00:34b5 FarCall07to06
+
+00:319d GetShortFromTable
+
+00:2722 Random
+
+00:31b4 UnkMath
+00:34c5 JumpAtFarCallDest
+00:3680 VBlank
+03:468a XInitEncounter
+03:6b60 PickEncounterGroup
+03:4613 InitBattleVariables
+03:48b5 UnkPostDamageCalc
+07:6d7f UnkLoadDamage
+
+; ROM data
+01:69AB RNGTable
+03:614e EncounterGroupTablePointers ; pointers to 4 pointers to enemy ids 
+03:648D DiagonAlleyEncounters
+
+; RAM
+0:cb83 wDamage
+0:cc04 wEnemiesPresent ; bitfield
+0:ce04 wRNGIndex
+
+; not sure about these
+0:c414 wHarryTmp
+0:c465 wEnemyTmp
+
+5:d400 wHarry
+5:d401 wHarryMaxHP
+5:d405 wHarryHP
+
+5:d419 wEnemy1
+5:d432 wEnemy2
+5:d44b wEnemy3
+
+6:d6d4 wHarryNoRobe
+
+; HRAM
+00:FFC1
+00:ffd8 hMap
+00:FFBD hFarCallLo
+00:FFBE hFarCallHi
+00:FFD2 hState
+
+; DMA
+0:ff51 rHDMA_SrcHi
+0:ff52 rHDMA_SrcLo
+0:ff53 rHDMA_DestHi
+0:ff54 rHDMA_DestLo
+0:ff55 rHDMA_Ctr
