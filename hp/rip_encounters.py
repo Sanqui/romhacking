@@ -154,8 +154,11 @@ with open("encounters.html", "w") as out:
     x-map > div {font-weight: bold; text-align: center;}
     x-group {display: inline-block; width: 48px; margin: 0 8px 0 8px;}
     x-group > div {text-align: center;}
-    x-enemy {display: block; width: 48px; height: 64px;
+    x-enemy {display: block; width: 48px; height: 52px;
         background-position: -33px -32px; margin: 0; padding: 0;}
+    
+    x-bosses x-enemy { height: 104px;
+        background-position: -33px 0px; margin: 0; padding: 0;}
 </style>
 <head>
 <body>
@@ -172,6 +175,7 @@ with open("encounters.html", "w") as out:
         out.write("</x-map>")
     
     out.write("<h2>Boss groups</h2>")
+    out.write("<x-bosses>")
     for i, group in enumerate(boss_groups):
         out.write("<x-group><div>{}</div>".format(i+1))
         for enemy in group:
@@ -180,6 +184,7 @@ with open("encounters.html", "w") as out:
             else:
                 out.write("<x-enemy></x-enemy>")
         out.write("</x-group>")
+    out.write("</x-bosses>")
 
 
 
