@@ -130,6 +130,19 @@ for i, map_name in enumerate(MAP_NAMES):
     map_groups.append(groups)
     print(" {}".format(groups))
 
+print("Boss groups:")
+for i in range(0xe):
+    group = []
+    rom.seek((0x3*0x4000)+0x25e0 + i*2)
+    
+    try:
+        rom.seek(readpointer())
+        for j in range(3):
+            group.append(readbyte())
+        print(" {}: {}".format(i+1, group))
+    except NotPointerException:
+        print(" {}: invalid".format(i+1))
+
 #for map_name, groups in zip(MAP_NAMES, map_groups):
 #    print("{} groups:".format(map_name))
 #    print(" {}".format(groups))

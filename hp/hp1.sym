@@ -56,6 +56,8 @@
 00:34c5 JumpAtFarCallDest
 00:3680 VBlank
 03:468a XInitEncounter
+03:470f IsBoss
+03:4714 PickBossGroup
 03:6b60 PickEncounterGroup
 03:4613 InitBattleVariables
 03:48b5 UnkPostDamageCalc
@@ -64,11 +66,13 @@
 ; ROM data
 01:69AB RNGTable
 03:614e EncounterGroupTablePointers ; pointers to 4 pointers to enemy ids 
-03:648D DiagonAlleyEncounters
+;03:648D DiagonAlleyEncounters
+03:65e0 BossGroupsPointers
 
 ; RAM
 0:cb83 wDamage
 0:cc04 wEnemiesPresent ; bitfield
+0:cc05 wBossGroup
 0:ce04 wRNGIndex
 
 ; not sure about these
