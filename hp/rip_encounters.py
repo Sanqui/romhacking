@@ -130,6 +130,7 @@ for i, map_name in enumerate(MAP_NAMES):
     map_groups.append(groups)
     print(" {}".format(groups))
 
+boss_groups = []
 print("Boss groups:")
 for i in range(0xe):
     group = []
@@ -142,11 +143,43 @@ for i in range(0xe):
         print(" {}: {}".format(i+1, group))
     except NotPointerException:
         print(" {}: invalid".format(i+1))
+    boss_groups.append(group)
 
-#for map_name, groups in zip(MAP_NAMES, map_groups):
-#    print("{} groups:".format(map_name))
-#    print(" {}".format(groups))
+with open("encounters.html", "w") as out:
+    out.write("""<!doctype html>
+<html><head><meta charset='utf-8'>
+<style>
+    body {margin-left: 32px; text-align: center;}
+    x-map {display: inline-block; border: 1px solid black; margin: 1px;}
+    x-map > div {font-weight: bold; text-align: center;}
+    x-group {display: inline-block; width: 48px; margin: 0 8px 0 8px;}
+    x-group > div {text-align: center;}
+    x-enemy {display: block; width: 48px; height: 64px;
+        background-position: -33px -32px; margin: 0; padding: 0;}
+</style>
+<head>
+<body>
+""")
     
+    out.write("<h2>Encounters</h2>")
+    for map_name, groups in zip(MAP_NAMES, map_groups):
+        out.write("<x-map><div>{}</div>".format(map_name))
+        for i, group in enumerate(groups):
+            out.write("<x-group><div>{}</div>".format(i))
+            for enemy in group:
+                out.write("<x-enemy style='background-image: url(\"enemies/enemy_{}.png\")'></x-enemy>".format(enemy))
+            out.write("</x-group>")
+        out.write("</x-map>")
+    
+    out.write("<h2>Boss groups</h2>")
+    for i, group in enumerate(boss_groups):
+        out.write("<x-group><div>{}</div>".format(i+1))
+        for enemy in group:
+            if enemy:
+                out.write("<x-enemy style='background-image: url(\"enemies/enemy_{}.png\")'></x-enemy>".format(enemy))
+            else:
+                out.write("<x-enemy></x-enemy>")
+        out.write("</x-group>")
 
 
 

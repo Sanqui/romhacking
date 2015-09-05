@@ -52,16 +52,16 @@
 
 00:2722 Random
 
-00:31b4 UnkMath
+00:31b4 XMath
 00:34c5 JumpAtFarCallDest
 00:3680 VBlank
-03:468a XInitEncounter
+03:468a InitEncounter
 03:470f IsBoss
 03:4714 PickBossGroup
 03:6b60 PickEncounterGroup
 03:4613 InitBattleVariables
-03:48b5 UnkPostDamageCalc
-07:6d7f UnkLoadDamage
+03:48b5 XPostDamageCalc
+07:6d7f XLoadDamage
 
 ; ROM data
 01:69AB RNGTable
@@ -75,9 +75,8 @@
 0:cc05 wBossGroup
 0:ce04 wRNGIndex
 
-; not sure about these
-0:c414 wHarryTmp
-0:c465 wEnemyTmp
+0:c414 wHarryTmp ; ?
+0:c465 wEnemyTmp ; ?
 
 5:d400 wHarry
 5:d401 wHarryMaxHP
