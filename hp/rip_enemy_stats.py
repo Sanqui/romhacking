@@ -39,27 +39,35 @@ with open("enemies.html", "w") as out:
     x-pic {display: block; width: 48px; height: 104px;  float: left;
         background-position: -33px -0px; margin: 0; padding: 0;}
     table x-pic {height: 24px; background-position: -33px -48px;}
+    table x-pic:hover {}
     table {border-collapse: collapse; margin: auto;}
-    td {border: 1px solid #bbb; text-align: right;}
-    tr:first-child {font-weight: bold;}
+    td {border: 1px solid #bbb; text-align: right; }
+    tr:first-child {font-weight: bold; }
+    tr:first-child td {padding-bottom: 2px; background: #eee;}
 </style>
 </head>
 <body>
 """)
     
     out.write("<h2>Enemy stats</h2>")
-    for i, enemy in enumerate(enemies):
+    """for i, enemy in enumerate(enemies):
         out.write("<x-enemy>")
         out.write("<x-pic style='background-image: url(\"enemies/enemy_{}.png\")'></x-pic>".format(i+2))
         out.write("HP: {}<br>".format(enemy[1]))
         out.write("MP: {}<br>".format(enemy[2]))
         out.write("{}<br>".format(", ".join(str(x) for x in enemy[2:])))
-        out.write("</x-enemy>")
+        out.write("</x-enemy>")"""
     
     out.write("<h2>table</h2>")
-    out.write("""<table><tr><td>num</td><td>pic</td><td>hp</td><td>mp</td>
-<td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td>
-<td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>""")
+    out.write("""<table><tr><td>num</td><td>pic</td><td>HP</td><td>MP</td>
+<td><abbr title="priority/slowness.  lower value = moves earlier in the turn">Pri</abbr></td>
+    <td>Str</td><td>4</td>
+    <td><abbr title="Defense against Flipendo">Flip</a></td>
+    <td><abbr title="Vermillious">Vermi</a></td>
+    <td><abbr title="Defense against Verdimillious?">Verdi?</a></td>
+    <td><abbr title="Defense against Incendio?">Inc?</a></td>
+    <td><abbr title="Defense against Wingadium Leviosa?">Wing?</a></td>
+<td>psn1</td><td>psn2</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>""")
     
     for i, enemy in enumerate(enemies):
         out.write("<tr>")
