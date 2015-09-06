@@ -61,12 +61,11 @@ with open("enemies.html", "w") as out:
     out.write("<h2>table</h2>")
     out.write("""<table><tr><td>num</td><td>pic</td><td>HP</td><td>MP</td>
 <td><abbr title="priority/slowness.  lower value = moves earlier in the turn">Pri</abbr></td>
-    <td>Str</td><td>4</td>
-    <td><abbr title="Defense against Flipendo">Flip</a></td>
+    <td>zero</td><td>Str</td><td>5</td>
+    <td><abbr title="Defense against Flipendo and Wingadium Leviosa">Flip</a></td>
     <td><abbr title="Vermillious">Vermi</a></td>
     <td><abbr title="Defense against Verdimillious?">Verdi?</a></td>
     <td><abbr title="Defense against Incendio?">Inc?</a></td>
-    <td><abbr title="Defense against Wingadium Leviosa?">Wing?</a></td>
 <td>psn1</td><td>psn2</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>""")
     
     for i, enemy in enumerate(enemies):

@@ -92,10 +92,10 @@
 
 00:0008 GetAAtHl
 00:2448 SwitchState
-00:24a2 JumpFrameCallback0  ; prepare for fade in (gfx)?
+00:24a2 JumpFrameCallback0  ; init / prepare for fade in (gfx)?
 00:24aa JumpFrameCallback1  ; enter?
 00:24b2 JumpFrameCallback2  ; every frame
-00:24bd JumpFrameCallback3  ; exit?
+00:24bd JumpFrameCallback3  ; exit (incl. the check)
 00:2494 JumpFrameCallback
 00:2899 FadeToWhite
 00:28E1 LoadStateTiles
@@ -113,6 +113,7 @@
 00:393e PlayPCM
 
 00:00a5 Multiply?
+00:112e ZeroMemory
 00:31b4 XMath
 00:34c5 JumpAtFarCallDest
 00:3680 VBlank
@@ -128,8 +129,9 @@
 03:48b5 XPostDamageCalc
 03:532b XEnterBattleState
 03:54a6 XDoBattleMenu
+03:553b SpellMenuInit
 03:556a BattleRunState
-03:56e4 XBattleTilemap?
+03:56e4 ClearBattleText?
 03:56B4 BattleRunFailConfirmation
 03:57e0 EndTurn?
 
@@ -156,6 +158,7 @@
 0:ccfe wFrameCallback1
 0:cd00 wFrameCallback2
 0:cd02 wFrameCallback3
+0:cb29 wSpellMenuData
 0:cb83 wDamage
 0:cbe2 wBattler
 0:cbed wSomeBattleDelay?
@@ -163,10 +166,12 @@
 0:cc04 wEnemiesPresent ; bitfield
 0:cc05 wBossGroup
 0:cde0 wHarry
+0:cdfe wKnownSpells ; short bitfield
 0:ce04 wRNGIndex
 0:cb68 wPotionMinigameCards
 0:cb6f wPotionMinigameKinds
 0:ce03 wSelectedDeck?
+0:ce17 wKnowsAllSpells ; bypasses what harry actually knows.  maybe used in testing?
 
 0:c414 wHarryTmp ; ?
 0:c465 wEnemyTmp ; ?
@@ -187,10 +192,11 @@
 5:d424 wEnemy1Strength
 5:d425 wEnemy1Unk
 5:d426 wEnemy1FlipendoDef
-5:d426 wEnemy1VermilliousDef
-5:d426 wEnemy1VerdimilliousDef
-5:d426 wEnemy1IncendioDef
-5:d426 wEnemy1WingadiumLeviosaDef
+5:d427 wEnemy1VermilliousDef
+5:d428 wEnemy1VerdimilliousDef
+5:d429 wEnemy1IncendioDef
+5:d42a wEnemy1Unk
+5:d42b wEnemy1Animation ; This is not just visual
 5:d432 wEnemy2
 5:d433 wEnemy2MaxHP
 5:d435 wEnemy2MaxMP
