@@ -1,4 +1,45 @@
 ; ROM routines
+00:11e2 Copy256b
+00:11e5 Copy224b
+00:11e8 Copy192b
+00:11eb Copy160b
+00:11ee Copy128b
+00:11f1 Copy96b
+00:11f4 Copy64b
+00:11f7 Copy32b
+00:11fa Copy31b
+00:11fd Copy30b
+00:1200 Copy29b
+00:1203 Copy28b
+00:1206 Copy27b
+00:1209 Copy26b
+00:120c Copy25b
+00:120f Copy24b
+00:1212 Copy23b
+00:1215 Copy22b
+00:1218 Copy21b
+00:121b Copy20b
+00:121e Copy19b
+00:1221 Copy18b
+00:1224 Copy17b
+00:1227 Copy16b
+00:122a Copy15b
+00:122d Copy14b
+00:1230 Copy13b
+00:1233 Copy12b
+00:1236 Copy11b
+00:1239 Copy10b
+00:123c Copy9b
+00:123f Copy8b
+00:1242 Copy7b
+00:1245 Copy6b
+00:1248 Copy5b
+00:124b Copy4b
+00:124e Copy3b
+00:1251 Copy2b
+00:1254 Copy1b
+
+
 00:335e FarCall01to02
 00:3365 FarCall01to03
 00:336c FarCall01to04
@@ -58,7 +99,11 @@
 00:2494 JumpFrameCallback
 00:2899 FadeToWhite
 00:28E1 LoadStateTiles
-00:319d GetShortFromTable
+00:317d AddHL4DE
+00:3185 AddHL3DE
+00:318c AddHL2DE
+00:3194 GetDEFromTable
+00:319d GetHLFromTable
 
 00:2722 Random
 
@@ -67,6 +112,7 @@
 00:3332 XLoadBattleBackgroundTilemap
 00:393e PlayPCM
 
+00:00a5 Multiply?
 00:31b4 XMath
 00:34c5 JumpAtFarCallDest
 00:3680 VBlank
@@ -75,6 +121,9 @@
 03:468a InitEncounter
 03:470f IsBoss
 03:4714 PickBossGroup
+03:482b LoadBattlerStats
+03:484a LoadBattlerStats.isharry
+03:4de5 GetBattlerAddress
 03:6b60 PickEncounterGroup
 03:48b5 XPostDamageCalc
 03:532b XEnterBattleState
@@ -85,7 +134,8 @@
 03:57e0 EndTurn?
 
 04:6b9c XEatChocolateFrog
-06:5db3 GiveRandomCardFromSet
+04:6bbd GiveCard
+06:5db3 GetRandomCardFromSet
 06:5ad5 RandomCardSets
 06:5aff RandomCardMappings
 
@@ -95,6 +145,7 @@
 ; ROM data
 01:69AB RNGTable
 03:5312 BattleMenuStates
+03:5c1f EnemyStats
 03:614e EncounterGroupTablePointers ; pointers to 4 pointers to enemy ids 
 ;03:648D DiagonAlleyEncounters
 03:65e0 BossGroupsPointers
@@ -106,10 +157,12 @@
 0:cd00 wFrameCallback2
 0:cd02 wFrameCallback3
 0:cb83 wDamage
+0:cbe2 wBattler
 0:cbed wSomeBattleDelay?
 0:cc03 wBattleDelayAfterRound
 0:cc04 wEnemiesPresent ; bitfield
 0:cc05 wBossGroup
+0:cde0 wHarry
 0:ce04 wRNGIndex
 0:cb68 wPotionMinigameCards
 0:cb6f wPotionMinigameKinds
@@ -118,18 +171,36 @@
 0:c414 wHarryTmp ; ?
 0:c465 wEnemyTmp ; ?
 
-5:d400 wHarry
-5:d401 wHarryMaxHP
-5:d403 wHarryMaxMP
-5:d405 wHarryHP
-5:d405 wHarryMP
+5:d400 wBattleHarry
+5:d401 wBattleHarryMaxHP
+5:d403 wBattleHarryMaxMP
+5:d405 wBattleHarryHP
+5:d407 wBattleHarryMP
 
 5:d419 wEnemy1
 5:d41a wEnemy1MaxHP
-5:d41a wEnemy1MaxHP
+5:d41c wEnemy1MaxMP
+5:d41e wEnemy1HP
+5:d420 wEnemy1MP
+5:d422 wEnemy1Strength
+5:d423 wEnemy1Unk
+5:d424 wEnemy1Unk
+5:d425 wEnemy1Unk
+5:d426 wEnemy1Unk
 5:d432 wEnemy2
+5:d433 wEnemy2MaxHP
+5:d435 wEnemy2MaxMP
+5:d437 wEnemy2HP
+5:d439 wEnemy2MP
+5:d43b wEnemy2Strength
+5:d43c wEnemy2Unk
+5:d43d wEnemy2Unk
+5:d43e wEnemy2Unk
+5:d43f wEnemy2Unk
 5:d44b wEnemy3
 
+6:d053 wNumChocolateFrogs
+6:d50a wCardAmounts
 6:d6d4 wHarryNoRobe
 
 ; HRAM
