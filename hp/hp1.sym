@@ -90,7 +90,11 @@
 00:34ae FarCall07to05
 00:34b5 FarCall07to06
 
+00:34e9 GetAddressFromBank9?
+00:3525 GetScriptCommand ; into a and de
+
 00:0008 GetAAtHl
+00:177F OverworldState
 00:2448 SwitchState
 00:24a2 JumpFrameCallback0  ; init / prepare for fade in (gfx)?
 00:24aa JumpFrameCallback1  ; enter?
@@ -99,9 +103,9 @@
 00:2494 JumpFrameCallback
 00:2899 FadeToWhite
 00:28E1 LoadStateTiles
-00:317d AddHL4DE
-00:3185 AddHL3DE
-00:318c AddHL2DE
+00:317d AddHL4A
+00:3185 AddHL3A
+00:318c AddHL2A
 00:3194 GetDEFromTable
 00:319d GetHLFromTable
 
@@ -117,6 +121,8 @@
 00:31b4 XMath
 00:34c5 JumpAtFarCallDest
 00:3680 VBlank
+00:3850 DoOverworldPaletteCycling
+01:70d6 DoOverworldBGAnimations
 03:4613 InitBattleVariables
 03:4687 GetMap
 03:468a InitEncounter
@@ -137,6 +143,15 @@
 
 04:6b9c XEatChocolateFrog
 04:6bbd GiveCard
+05:5fe1 AdvanceScript
+05:5fee AdvanceScript.advance
+05:6011 AdvanceScriptState1
+05:627b AdvanceScriptState2
+05:7468 AdvanceScriptState6
+05:62ac AdvanceScriptState3
+05:6252 AdvanceScriptState45
+05:60ef ScriptCommand09
+
 06:5db3 GetRandomCardFromSet
 06:5ad5 RandomCardSets
 06:5aff RandomCardMappings
@@ -151,8 +166,11 @@
 03:614e EncounterGroupTablePointers ; pointers to 4 pointers to enemy ids 
 ;03:648D DiagonAlleyEncounters
 03:65e0 BossGroupsPointers
+05:5c9f ScriptCommandRoutines
 
 ; RAM
+0:c30b wMapDoBGAnimations
+0:c30b wMapCyclePalette
 0:ccfb wFrameCallbackBank
 0:ccfc wFrameCallback0
 0:ccfe wFrameCallback1
@@ -175,6 +193,18 @@
 
 0:c414 wHarryTmp ; ?
 0:c465 wEnemyTmp ; ?
+
+; 1
+; 2
+; 3
+; 4 = switch to 5
+; 5
+; 6
+; 7
+0:CB17 wOverworldScriptState
+0:CB18 wOverworldScriptPosition? ; short
+0:CB1A wOverworldScriptMap? ; matches hMap+1?
+0:CB1B wOverworldScriptWait ; short
 
 5:d400 wBattleHarry
 5:d401 wBattleHarryMaxHP
