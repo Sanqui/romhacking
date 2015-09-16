@@ -137,6 +137,7 @@ for d in range(4):
         sets.append(set_)
     decks.append(sets)
 
+
 for d, sets in enumerate(decks):
     print("When collecting deck {}:".format(d))
     for i, set_ in enumerate(sets):
@@ -145,3 +146,17 @@ for d, sets in enumerate(decks):
             print("  - {}. {}".format(c, CARDS[c]))
         print
     print("---")
+
+
+
+# -----------------------------------
+
+for i in range(1): # TODO map count
+    rom.seek(9*0x4000 + 1)
+    bank = readbyte()
+    offset = readshort()
+    rom.seek(bank*0x4000 + offset) # not a bug
+    for j in range(32):
+        command = readbyte()
+        params = [readbyte(), readbyte()]
+        print command, params
