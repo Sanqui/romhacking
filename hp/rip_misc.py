@@ -148,15 +148,3 @@ for d, sets in enumerate(decks):
     print("---")
 
 
-
-# -----------------------------------
-
-for i in range(1): # TODO map count
-    rom.seek(9*0x4000 + 1)
-    bank = readbyte()
-    offset = readshort()
-    rom.seek(bank*0x4000 + offset) # not a bug
-    for j in range(32):
-        command = readbyte()
-        params = [readbyte(), readbyte()]
-        print command, params

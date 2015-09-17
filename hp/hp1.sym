@@ -99,6 +99,7 @@
 00:34e9 GetAddressFromBank9?
 00:3525 GetScriptCommand ; into a and de
 
+00:0000 JumpTable
 00:0008 GetAAtHl
 00:177F OverworldState
 00:2448 SwitchState
@@ -156,6 +157,7 @@
 05:7468 AdvanceScriptState6
 05:62ac AdvanceScriptState3
 05:6252 AdvanceScriptState45
+;       ScriptCommand00 = terminator
 05:6060 ScriptCommand01
 05:6071 ScriptCommand02
 05:607F ScriptCommand03
@@ -164,7 +166,7 @@
 05:60B4 ScriptCommand06
 05:60C2 ScriptCommand07
 05:60CA ScriptCommand08
-05:60EF ScriptCommand09
+05:60EF ScriptCommand09 ; UNKSTART
 05:6106 ScriptCommand0a
 05:611F ScriptCommand0b
 05:6144 ScriptCommand0c
@@ -176,7 +178,7 @@
 05:6222 ScriptCommand12
 05:6239 ScriptCommand13
 05:6242 ScriptCommand14
-05:624B ScriptCommand15
+05:624B ScriptCommand15 ; FACE
 05:6541 ScriptCommand16
 05:62F2 ScriptCommand17
 05:6331 ScriptCommand18
@@ -201,17 +203,17 @@
 05:73C1 ScriptCommand2b
 05:6D9A ScriptCommand2c
 05:7122 ScriptCommand2d
-05:62CC ScriptCommand2e
+05:62CC ScriptCommand2e ; PCM
 05:62D7 ScriptCommand2f
 05:62E2 ScriptCommand30
 05:62E8 ScriptCommand31
 05:605D ScriptCommand32
-05:6755 ScriptCommand33
+05:6755 ScriptCommand33 ; MSG
 05:7049 ScriptCommand34
 05:706C ScriptCommand35
 05:705A ScriptCommand36
 05:6D6E ScriptCommand37
-05:6DBA ScriptCommand38
+05:6DBA ScriptCommand38 ; GIVEITEM
 05:6DCA ScriptCommand39
 05:6DDA ScriptCommand3a
 05:69AF ScriptCommand3b
