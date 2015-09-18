@@ -58,8 +58,10 @@ COMMANDS = {
     0x55: "SPECIAL",
     0x61: "HEAL", # bool, should msg appear
     0x62: "SETQUEST",
+    0x6c: "GETEQUIP",
     0x69: "NUMITEM", # puts number of item in 254
     0x6a: "GIVESPELL",
+    0x79: "WARP2",
     0x7f: "SYSMSG",
 }
 
@@ -154,7 +156,7 @@ for x in range(1048*40):
             elif params[0] == 254:
                 #string = "quantity of {}".format(GAME_STRINGS[1401+last_numitem])
                 # meh
-                string = "item quantity"
+                string = "result/quantity/item"
         elif command_name == "WARP":
             string = GAME_STRINGS[2116+params[0]]
         elif command_name == "SHOP/POINTS":
@@ -163,7 +165,7 @@ for x in range(1048*40):
             elif params[0] == 1:
                 string = "house points"
         elif command_name == "GIVESPELL":
-            string = GAME_STRINGS[10+params[1]]
+            string = GAME_STRINGS[9+params[0]]
         if string: string = "; "+string+""
         print "{:02}:{:05}| ${:02x} {:11} {:3} {:3}  {}".format(map_num, k, command, command_name, params[0], params[1], string)
         if text: print " "+text

@@ -108,6 +108,7 @@
 00:24b2 JumpFrameCallback2  ; every frame
 00:24bd JumpFrameCallback3  ; exit (incl. the check)
 00:2494 JumpFrameCallback
+00:2837 SetupScreenAndFade?
 00:2899 FadeToWhite
 00:28E1 LoadStateTiles
 00:317d AddHL4A
@@ -130,6 +131,8 @@
 00:3680 VBlank
 00:3850 DoOverworldPaletteCycling
 01:70d6 DoOverworldBGAnimations
+01:7e3a TelescopeState0
+01:7e40 TelescopeState1
 03:4613 InitBattleVariables
 03:4687 GetMap
 03:468a InitEncounter
@@ -147,6 +150,7 @@
 03:56e4 ClearBattleText?
 03:56B4 BattleRunFailConfirmation
 03:57e0 EndTurn?
+03:7c6d SetUpScanlineEffects?
 
 04:6b9c XEatChocolateFrog
 04:6bbd GiveCard
