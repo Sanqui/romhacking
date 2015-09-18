@@ -99,7 +99,7 @@
 00:34e9 GetAddressFromBank9?
 00:3525 GetScriptCommand ; into a and de
 
-00:0000 JumpTable
+;00:0000 JumpTable
 00:0008 GetAAtHl
 00:177F OverworldState
 00:2448 SwitchState
@@ -432,6 +432,7 @@
 0:c414 wHarryTmp ; ?
 0:c465 wEnemyTmp ; ?
 
+0:cb03 wScriptParam3
 ; 1
 ; 2
 ; 3

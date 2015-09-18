@@ -17,20 +17,25 @@ def readbyte():
 
 COMMANDS = {
     0x00: "END",
+    0x03: "SKIP",
     0x04: "SKIPIF",
     0x05: "SKIPIFNOT",
-    0x09: "CMP",
+    0x09: "EQUAL",
+    0x0b: "LESSTHAN",
     0x0f: "SET",
-    0x15: "FACE/DIR",
-    0x17: "SELECTOBJ",
+    0x15: "PARAM0",
+    0x16: "PARAM1",
+    0x17: "PARAM2",
     0x19: "MOVE",
     0x1e: "HIDE",
     0x21: "ANIM",
     0x27: "WAIT",
-    0x2e: "PCM",
+    0x28: "WARP",
+    0x2e: "SFX",
     0x33: "MSG",
     0x35: "BOSSBATTLE",
     0x38: "GIVEITEM",
+    0x39: "TAKEITEM",
 #    0x27: "CARDCOMBO1"
     0x2a: "GIVECOMBO",
     0x3c: "GIVECARD",
@@ -38,6 +43,8 @@ COMMANDS = {
     0x42: "TAKEPOINTS",
     0x55: "SPECIAL",
     0x61: "HEAL", # bool, should msg appear
+    0x62: "SETQUEST",
+    0x69: "NUMITEM", # puts number of item in 254
     0x7f: "SYSMSG",
 }
 
@@ -52,12 +59,16 @@ for i in range(0, 0x44): # TODO map count
     map_script_addresses.append(0x4000*bank + offset)
     
 # Sorry about this mess, but I don't really care
-    
+
+script_params = [0, 0, 0]
+last_numitem = 0
+
 map_num = 0
 rom.seek(map_script_addresses[map_num])
 k = 0
 #while True:
 for x in range(1048*40):
+    if k >= 23441 and map_num == 67: break
     if rom.tell() in map_script_addresses:
         k = 0
         map_num = map_script_addresses.index(rom.tell())
@@ -66,7 +77,11 @@ for x in range(1048*40):
             map_name = ""
         print "--- {:02}. {} ---".format(map_num, map_name)
     command = readbyte()
-    if command == 0xff: continue
+    if command == 0xff:
+        # ends of banks are filled with 0xff
+        while command == 0xff:
+            command = readbyte() # first byte in bank is byte id
+        continue
     k += 1
     end = False
     if command == 0 and rom.tell() in map_script_addresses:
@@ -78,7 +93,7 @@ for x in range(1048*40):
         if params != 0:
             rom.seek(rom.tell()-2)
             k -= 2
-        print "{:05}| $00 END           0   0\n".format(k)
+        print "{:02}:{:05}| $00 END           0   0\n".format(map_num, k)
         continue
     if not end:
         command_name = COMMANDS.get(command, "?")
@@ -92,12 +107,40 @@ for x in range(1048*40):
                 text = GAME_STRINGS[params[0]*256 + params[1]]
             except IndexError:
                 text = ""
-        elif command_name == "GIVEITEM":
+            string = "face {}".format(script_params[0])
+        elif command_name == "MOVE":
+            string = "object {}, direction {}".format(script_params[0], script_params[2])
+        elif "POINTS" in command_name:
+            string = "house {}".format(script_params[0])
+        elif command_name in ("GIVEITEM", "NUMITEM", "TAKEITEM"):
             string = GAME_STRINGS[1401+params[0]]
+            if command_name == "NUMITEM":
+                last_numitem = params[0]
         elif command_name == "GIVECARD":
             string = GAME_STRINGS[1621+params[0]]
-        if string: string = "("+string+")"
-        print "{:05}| ${:02x} {:11} {:3} {:3}  {}".format(k, command, command_name, params[0], params[1], string)
+        elif "SKIP" in command_name:
+            string = "to {}".format(k + 3*params[0])
+        elif command_name == "PARAM0": script_params[0] = params[0]
+        elif command_name == "PARAM1": script_params[1] = params[0]
+        elif command_name == "PARAM2": script_params[2] = params[0]
+        elif command_name == "SETQUEST":
+            string = GAME_STRINGS[2021+params[0]]
+        elif command_name in ("EQUAL", "LESSTHAN"):
+            if params[0] == 0:
+                if GAME_STRINGS[2021+params[1]].strip():
+                    string = "quest {}".format(GAME_STRINGS[2021+params[1]])
+                else:
+                    string = "unnamed quest {}".format(params[1])
+            elif params[0] == 250:
+                string = "result of last battle?"
+            elif params[0] == 254:
+                #string = "quantity of {}".format(GAME_STRINGS[1401+last_numitem])
+                # meh
+                string = "item quantity"
+        elif command_name == "WARP":
+            string = GAME_STRINGS[2116+params[0]]
+        if string: string = "; "+string+""
+        print "{:02}:{:05}| ${:02x} {:11} {:3} {:3}  {}".format(map_num, k, command, command_name, params[0], params[1], string)
         if text: print " "+text
     if command == 0:
         print "     |"
