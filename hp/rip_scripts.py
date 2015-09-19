@@ -56,6 +56,9 @@ COMMANDS = {
     0x51: "SELECTMSG",
     0x54: "SHOP/POINTS",
     0x55: "SPECIAL",
+    0x56: "LOCK",
+    0x57: "UNLOCK",
+    0x5f: "BLOCKING",
     0x61: "HEAL", # bool, should msg appear
     0x62: "SETQUEST",
     0x6c: "GETEQUIP",
@@ -105,12 +108,14 @@ for x in range(1048*40):
         print "{:05}| END\n".format(k)
         end = True
     elif command == 0:
-        params = readshort()
+        params = [readbyte(), readbyte()]
         k += 2
-        if params != 0:
+        if params[0] != 0 or params[1] != 0:
             rom.seek(rom.tell()-2)
             k -= 2
-        print "{:02}:{:05}| $00 END           0   0\n".format(map_num, k)
+            print "{:02}:{:05}| $00 END\n".format(map_num, k-1, *params)
+        else:
+            print "{:02}:{:05}| $00 END         {:3} {:3}\n".format(map_num, k-3, *params)
         continue
     if not end:
         command_name = COMMANDS.get(command, "?")
@@ -139,7 +144,7 @@ for x in range(1048*40):
         elif command_name in ("GIVECARD", "TAKECARD"):
             string = GAME_STRINGS[1621+params[0]]
         elif "SKIP" in command_name:
-            string = "to {}".format(k + 3*params[0])
+            string = "to {}".format(k - 3 + 3*params[0])
         elif command_name == "PARAM0": script_params[0] = params[0]
         elif command_name == "PARAM1": script_params[1] = params[0]
         elif command_name == "PARAM2": script_params[2] = params[0]
@@ -158,7 +163,8 @@ for x in range(1048*40):
                 # meh
                 string = "result/quantity/item"
         elif command_name == "WARP":
-            string = GAME_STRINGS[2116+params[0]]
+            if params[0] != 0xff:
+                string = GAME_STRINGS[2116+params[0]]
         elif command_name == "SHOP/POINTS":
             if params[0] == 0:
                 string = "shop {}".format(params[1])
@@ -167,7 +173,7 @@ for x in range(1048*40):
         elif command_name == "GIVESPELL":
             string = GAME_STRINGS[9+params[0]]
         if string: string = "; "+string+""
-        print "{:02}:{:05}| ${:02x} {:11} {:3} {:3}  {}".format(map_num, k, command, command_name, params[0], params[1], string)
+        print "{:02}:{:05}| ${:02x} {:11} {:3} {:3}  {}".format(map_num, k-3, command, command_name, params[0], params[1], string)
         if text: print " "+text
     if command == 0:
         print "     |"
