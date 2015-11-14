@@ -29,8 +29,8 @@
 00:382f GetHLAtSPPlus03
 00:383f GetHLAtSPPlusHL
 
-03:77b3 Unk
-03:77c6 UnkPointerTable
+03:77b3 ShakeScroll?
+03:77c6 ShakeScroll?PointerTable
 
 18:571f DoDamage
 18:576d DoDamage.waitloop
@@ -61,6 +61,9 @@
 
 0:dba8 wBattleRobopon
 0:dbb5 wBattleRoboponHP
+
+; on stack :-)
+0:de61 stackSelectedMove
 
 ; hram
 0:ff80 hBank
