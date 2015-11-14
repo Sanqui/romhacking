@@ -1,0 +1,68 @@
+; rom
+00:03f2 Bankswitch
+00:03f8 Farcall
+00:0404 Farcall.stackoverflow
+00:0417 Farcall.stackfree
+00:35e8 Copy
+00:35ec Copy.loop
+00:35f1 Copy.checkzero
+00:3848 ReadHLAtSPPlusParam ; param = byte after call
+00:3875 XchgValuesOnStack?
+
+00:3773 WriteHLToSPPlus0A
+00:3779 WriteHLToSPPlus09
+00:377f WriteHLToSPPlus08
+00:3785 WriteHLToSPPlus07
+00:378b WriteHLToSPPlus06
+00:3791 WriteHLToSPPlus05
+00:3797 WriteHLToSPPlus04
+00:379A WriteHLToSPPlus03
+00:37c7 WriteHLToSPPlusDE
+
+00:3805 GetHLAtSPPlus0A
+00:380b GetHLAtSPPlus09
+00:3811 GetHLAtSPPlus08
+00:3817 GetHLAtSPPlus07
+00:381d GetHLAtSPPlus06
+00:3823 GetHLAtSPPlus05
+00:3829 GetHLAtSPPlus04
+00:382f GetHLAtSPPlus03
+00:383f GetHLAtSPPlusHL
+
+03:77b3 Unk
+03:77c6 UnkPointerTable
+
+18:571f DoDamage
+18:576d DoDamage.waitloop
+18:59c2 ApplyDamage
+18:5a16 ApplyDamage.to_player
+18:5a35 ApplyDamage.to_enemy
+18:7d2c DrawHealthBar
+
+; sram
+3:adbc sCurrentRobopon
+3:adc9 sCurrentRoboponHP
+
+; wram
+0:c203 wVBlankWait1?
+0:c204 wVBlankWait2?
+0:c207 wWaitUntilFrame
+0:c209 wFrame
+0:c21a wFarcallBank
+0:c21b wFarcallAddress
+
+0:c9b0 wRobopon1Name
+0:c9c1 wRobopon1Leve2
+0:c9c2 wRobopon1Move3
+0:c9c6 wRobopon1HP
+0:c9c8 wRobopon1MaxHP
+0:c9ca wRobopon1EP
+0:c9cc wRobopon1MaxEP
+
+0:dba8 wBattleRobopon
+0:dbb5 wBattleRoboponHP
+
+; hram
+0:ff80 hBank
+0:fff4 hOAMDMA
+; rest of hram is unused
