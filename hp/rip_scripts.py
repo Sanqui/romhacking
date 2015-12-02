@@ -1,3 +1,6 @@
+PRINT_SCRIPTS = True
+PRINT_SCRIPT_SYMBOLS = False
+
 rom = open("hp1.gbc", "rb")
 
 class NotPointerException(ValueError): pass
@@ -78,6 +81,10 @@ for i in range(0, 0x44): # TODO map count
     offset = readshort()
     map_script_addresses.append(0x4000*bank + offset)
     
+    if PRINT_SCRIPT_SYMBOLS:
+        print "{:02X}:{:04X} Script_{}".format(bank, offset,
+            GAME_STRINGS[2115+i].replace("'", '').title().replace(' ', ''))
+    
 # Sorry about this mess, but I don't really care
 
 script_params = [0, 0, 0]
@@ -86,6 +93,9 @@ last_numitem = 0
 map_num = 0
 rom.seek(map_script_addresses[map_num])
 k = 0
+cur_map_scripts = []
+
+if not PRINT_SCRIPTS: quit()
 #while True:
 for x in range(1048*40):
     if k >= 23441 and map_num == 67: break
@@ -95,7 +105,18 @@ for x in range(1048*40):
         map_name = GAME_STRINGS[2115+map_num]
         if map_num == 0:
             map_name = ""
-        print "--- {:02}. {} ---".format(map_num, map_name)
+        print "--- {:02}. {}  @{:2x}:{:4x} ---".format(map_num, map_name, rom.tell()/0x4000, rom.tell()%0x4000+0x4000)
+        numscripts = readbyte()
+        k+=1
+        print "{} scripts".format(numscripts)
+        cur_map_scripts = []
+        for s in range(numscripts):
+            cur_map_scripts.append(((readbyte()<<8) + readbyte()) + numscripts*2 + 1)
+            k += 2
+        print cur_map_scripts
+    if k in cur_map_scripts:
+        print ""
+        print "; script {}/{} of {}".format(cur_map_scripts.index(k), len(cur_map_scripts), map_name)
     command = readbyte()
     if command == 0xff:
         # ends of banks are filled with 0xff
@@ -113,9 +134,9 @@ for x in range(1048*40):
         if params[0] != 0 or params[1] != 0:
             rom.seek(rom.tell()-2)
             k -= 2
-            print "{:02}:{:05}| $00 END\n".format(map_num, k-1, *params)
+            print "          {:02}:{:05}| $00 END\n".format(map_num, k-1, *params)
         else:
-            print "{:02}:{:05}| $00 END         {:3} {:3}\n".format(map_num, k-3, *params)
+            print "          {:02}:{:05}| $00 END         {:3} {:3}\n".format(map_num, k-3, *params)
         continue
     if not end:
         command_name = COMMANDS.get(command, "?")
@@ -173,7 +194,9 @@ for x in range(1048*40):
         elif command_name == "GIVESPELL":
             string = GAME_STRINGS[9+params[0]]
         if string: string = "; "+string+""
-        print "{:02}:{:05}| ${:02x} {:11} {:3} {:3}  {}".format(map_num, k-3, command, command_name, params[0], params[1], string)
+        print "@{:2X}:{:4X}  {:02}:{:05}| ${:02x} {:11} {:3} {:3}  {}".format(
+            (rom.tell()-3)/0x4000, (rom.tell()-3)%0x4000+0x4000,
+            map_num, k-3, command, command_name, params[0], params[1], string)
         if text: print " "+text
     if command == 0:
         print "     |"
