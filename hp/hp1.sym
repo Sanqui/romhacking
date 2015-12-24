@@ -110,220 +110,224 @@
 
 00:2485 IsChangingState
 
-; there are $18 tasks at a time
+; there are $18 Objects at a time
 ; starting from CA67 and growing down
-; each task has $51 bytes allocated (including the task function id)
-00:01d1 DoTasks
-00:01d6 HandleTask
-00:01fa TaskDone
-00:0203 NextTask
-00:03a0 MakeTask?? ; maybe MakeCloudTask
-01:41b3 JumpTask
-01:41b4 Tasks
-01:5cdf XXXTaskFlags
+; each Object has $51 bytes allocated (including the Object function id)
+00:01d1 DoObjects
+00:01d6 HandleObject
+00:01fa ObjectDone
+00:0203 NextObject
+00:03a0 MakeObject?? ; maybe MakeCloudObject
+01:41b3 JumpObject
+01:41b4 Objects
+01:5cdf XXXObjectFlags
 
-01:439a Task00
-00:0e7d Task01
-03:40ae HandleTask01Input?
-03:40b8 HandleTask01Input?.openingmenu
-03:40bb HandleTask01Input?.mapstate
-03:40cc HandleTask01Input?.ArmorGalleryCountdowns ; XXX TCRF maybe related to the spikes that never go off?
-03:40d1 HandleTask01Input?.ArmorGalleryCountdowns.loop
-03:40d7 HandleTask01Input?.NotArmorGallery
-03:40f1 HandleTask01Input?.newcloud
-03:4106 HandleTask01Input?.nonewcloud
-03:415f HandleTask01Input?.notCrossingTheLake
-03:4184 HandleTask01Input?.isCrossingTheLake
+01:439a Object00
+00:0e7d Object01
+03:40ae HandleObject01Input?
+03:40b8 HandleObject01Input?.openingmenu
+03:40bb HandleObject01Input?.mapstate
+03:40cc HandleObject01Input?.ArmorGalleryCountdowns ; XXX TCRF maybe related to the spikes that never go off?
+03:40d1 HandleObject01Input?.ArmorGalleryCountdowns.loop
+03:40d7 HandleObject01Input?.NotArmorGallery
+03:40f1 HandleObject01Input?.newcloud
+03:4106 HandleObject01Input?.nonewcloud
+03:415f HandleObject01Input?.notCrossingTheLake
+03:4184 HandleObject01Input?.isCrossingTheLake
 03:439b GeneateCloud
 
-00:0c4c Task02
-00:0a95 Task03
-00:0a95 Task04
-00:0e17 Task05
-00:0b6d Task06
-00:0c5f Task07
-00:0cc5 Task08
-00:0cc5 Task09
-00:0c5f Task0A
-00:0d9f Task0B
-00:0d99 Task0C
-00:0cc5 Task0D
-00:0cc5 Task0E
-00:0d54 Task0F
-00:0d62 Task10
-00:0d70 Task11
-00:0c9c Task12
-00:0cc5 Task13
-00:0c1e Task14
-00:0a95 Task15
-00:0a95 Task16
-00:0a95 Task17
-00:0b6d Task18
-00:0a95 Task19
-00:0a95 Task1A
-00:0a95 Task1B
-00:0cc5 Task1C
-00:0a95 Task1D
-00:0cc5 Task1E
-00:0a95 Task1F
-00:0a95 Task20
-00:0a95 Task21
-00:0b8e Task22
-00:0cc5 Task23
-00:0a95 Task24
-00:0a95 Task25
-00:0a95 Task26
-00:0a95 Task27
-00:0a95 Task28
-00:0a95 Task29
-00:0c31 Task2A
-00:0a95 Task2B
-00:0a95 Task2C
-00:0a95 Task2D
-00:0b8e Task2E
-00:0a95 Task2F
-00:0a95 Task30
-00:0a95 Task31
-00:0a95 Task32
-00:0a95 Task33
-00:0a95 Task34
-00:0a95 Task35
-00:0a95 Task36
-00:0a95 Task37
-00:0a95 Task38
-00:0a95 Task39
-00:0a95 Task3A
-00:0b6d Task3B
-00:0a95 Task3C
-00:0a95 Task3D
-00:0a95 Task3E
-00:0a95 Task3F
-00:0b6d Task40
-00:0b6d Task41
-00:0b6d Task42
-00:0b6d Task43
-00:0b6d Task44
-00:0b6d Task45
-00:0b6d Task46
-00:0b6d Task47
-00:0b6d Task48
-00:0a95 Task49
-00:0a95 Task4A
-00:0a95 Task4B
-00:0a95 Task4C
-00:0a95 Task4D
-00:0b7b Task4E
-00:0b7b Task4F
-00:0b7b Task50
-00:0b7b Task51
-00:0b6d Task52
-00:0d8e Task53
-00:0a95 Task54
-00:0a95 Task55
-00:0a95 Task56
-00:0a95 Task57
-00:0a95 Task58
-00:0d99 Task59
-00:0a95 Task5A
-00:0a95 Task5B
-00:0c1e Task5C
-00:0a95 Task5D
-00:0a95 Task5E
-00:0a95 Task5F
-00:0a95 Task60
-00:0a95 Task61
-00:0a95 Task62
-00:0a95 Task63
-00:0a95 Task64
-00:0c1e Task65
-00:0a95 Task66
-00:0a95 Task67
-00:0a95 Task68
-00:0a95 Task69
-00:0a95 Task6A
-00:0a95 Task6B
-00:0a95 Task6C
-00:0a95 Task6D
-00:0d46 Task6E
-00:0bca Task6F
-00:0bda Task70
-00:0d9f Task71
-00:0a95 Task72
-00:0a95 Task73
-01:439a Task74
-01:439a Task75
-01:439a Task76
-01:439a Task77
-01:439a Task78
-01:439a Task79
-01:439a Task7A
-00:0b3e Task7B
-00:0b3e Task7C
-00:0b3e Task7D
-00:0b3e Task7E
-00:0b3e Task7F
-00:0a95 Task80
-00:0a95 Task81
-00:0a95 Task82
-00:0a95 Task83
-00:0a95 Task84
-00:0a95 Task85
-00:0a95 Task86
-00:0a95 Task87
-00:0ccb Task88
-00:0cde Task89
-00:0d38 Task8A
-00:0d38 Task8B
-00:0d38 Task8C
-00:0d38 Task8D
-00:0d38 Task8E
-00:0a95 Task8F
-00:0a95 Task90
-00:0a95 Task91
-00:0a95 Task92
-00:0a95 Task93
-00:0a95 Task94
-00:0a95 Task95
-00:0a95 Task96
-00:0a95 Task97
-00:0a95 Task98
-00:0a95 Task99
-00:0a95 Task9A
-00:0a95 Task9B
-00:0a95 Task9C
-00:0a95 Task9D
-00:0a95 Task9E
-00:0a95 Task9F
-00:0a95 TaskA0
-00:0a95 TaskA1
-00:0a95 TaskA2
-00:0a95 TaskA3
-00:0a95 TaskA4
-00:0a95 TaskA5
-00:0cde TaskA6
-00:0d09 TaskA7
-00:0a95 TaskA8
-00:0a95 TaskA9
-00:0a95 TaskAA
-00:0a95 TaskAB
-00:0a95 TaskAC
-00:0a95 TaskAD
-00:0a95 TaskAE
-00:0cde TaskAF
-00:0b3e TaskB0
-00:0a95 TaskB1
-00:0a95 TaskB2
-00:0a95 TaskB3
-00:0a95 TaskB4
-00:0a95 TaskB5
-00:0a95 TaskB6
-00:0a95 TaskB7
-00:0a95 TaskB8
+00:0c4c Object02
+00:0a95 Object03
+00:0a95 Object04
+00:0e17 Object05
+00:0b6d Object06
+00:0c5f Object07
+00:0cc5 Object08
+00:0cc5 Object09
+00:0c5f Object0A
+00:0d9f Object0B
+00:0d99 Object0C
+00:0cc5 Object0D
+00:0cc5 Object0E
+00:0d54 Object0F
+00:0d62 Object10
+00:0d70 Object11
+00:0c9c Object12
+00:0cc5 Object13
+00:0c1e Object14
+00:0a95 Object15
+00:0a95 Object16
+00:0a95 Object17
+00:0b6d Object18
+00:0a95 Object19
+00:0a95 Object1A
+00:0a95 Object1B
+00:0cc5 Object1C
+00:0a95 Object1D
+00:0cc5 Object1E
+00:0a95 Object1F
+00:0a95 Object20
+00:0a95 Object21
+00:0b8e Object22
+00:0cc5 Object23
+00:0a95 Object24
+00:0a95 Object25
+00:0a95 Object26
+00:0a95 Object27
+00:0a95 Object28
+00:0a95 Object29
+00:0c31 Object2A
+00:0a95 Object2B
+00:0a95 Object2C
+00:0a95 Object2D
+00:0b8e Object2E
+00:0a95 Object2F
+00:0a95 Object30
+00:0a95 Object31
+00:0a95 Object32
+00:0a95 Object33
+00:0a95 Object34
+00:0a95 Object35
+00:0a95 Object36
+00:0a95 Object37
+00:0a95 Object38
+00:0a95 Object39
+00:0a95 Object3A
+00:0b6d Object3B
+00:0a95 Object3C
+00:0a95 Object3D
+00:0a95 Object3E
+00:0a95 Object3F
+00:0b6d Object40
+00:0b6d Object41
+00:0b6d Object42
+00:0b6d Object43
+00:0b6d Object44
+00:0b6d Object45
+00:0b6d Object46
+00:0b6d Object47
+00:0b6d Object48
+00:0a95 Object49
+00:0a95 Object4A
+00:0a95 Object4B
+00:0a95 Object4C
+00:0a95 Object4D
+00:0b7b Object4E
+00:0b7b Object4F
+00:0b7b Object50
+00:0b7b Object51
+00:0b6d Object52
+00:0d8e Object53
+00:0a95 Object54
+00:0a95 Object55
+00:0a95 Object56
+00:0a95 Object57
+00:0a95 Object58
+00:0d99 Object59
+00:0a95 Object5A
+00:0a95 Object5B
+00:0c1e Object5C
+00:0a95 Object5D
+00:0a95 Object5E
+00:0a95 Object5F
+00:0a95 Object60
+00:0a95 Object61
+00:0a95 Object62
+00:0a95 Object63
+00:0a95 Object64
+00:0c1e Object65
+00:0a95 Object66
+00:0a95 Object67
+00:0a95 Object68
+00:0a95 Object69
+00:0a95 Object6A
+00:0a95 Object6B
+00:0a95 Object6C
+00:0a95 Object6D
+00:0d46 Object6E
+00:0bca Object6F
+00:0bda Object70
+00:0d9f Object71
+00:0a95 Object72
+00:0a95 Object73
+01:439a Object74
+01:439a Object75
+01:439a Object76
+01:439a Object77
+01:439a Object78
+01:439a Object79
+01:439a Object7A
+00:0b3e Object7B ; battle enemy sprite?
+00:0b3e Object7C ; moving menu selector
+00:0b3e Object7D ; static menu selector
+00:0b3e Object7E
+00:0b3e Object7F
+00:0a95 Object80
+00:0a95 Object81
+00:0a95 Object82
+00:0a95 Object83
+00:0a95 Object84
+00:0a95 Object85
+00:0a95 Object86
+00:0a95 Object87
+00:0ccb Object88
+00:0cde Object89
+00:0d38 Object8A
+00:0d38 Object8B
+00:0d38 Object8C
+00:0d38 Object8D
+00:0d38 Object8E
+00:0a95 Object8F
+00:0a95 Object90
+00:0a95 Object91
+00:0a95 Object92
+00:0a95 Object93
+00:0a95 Object94
+00:0a95 Object95
+00:0a95 Object96
+00:0a95 Object97
+00:0a95 Object98
+00:0a95 Object99
+00:0a95 Object9A
+00:0a95 Object9B
+00:0a95 Object9C
+00:0a95 Object9D
+00:0a95 Object9E
+00:0a95 Object9F
+00:0a95 ObjectA0
+00:0a95 ObjectA1
+00:0a95 ObjectA2
+00:0a95 ObjectA3
+00:0a95 ObjectA4
+00:0a95 ObjectA5
+00:0cde ObjectA6
+00:0d09 ObjectA7
+00:0a95 ObjectA8
+00:0a95 ObjectA9
+00:0a95 ObjectAA
+00:0a95 ObjectAB
+00:0a95 ObjectAC
+00:0a95 ObjectAD
+00:0a95 ObjectAE
+00:0cde ObjectAF
+00:0b3e ObjectB0 
+00:0a95 ObjectB1
+00:0a95 ObjectB2
+00:0a95 ObjectB3
+00:0a95 ObjectB4
+00:0a95 ObjectB5
+00:0a95 ObjectB6
+00:0a95 ObjectB7
+00:0a95 ObjectB8
 
 
 ;00:0000 JumpTable
 00:0008 GetAAtHl
 00:177F MapState
+00:17b3 MapState.checkdebug ; this code is jr'd over, but
+                            ; if up+a+b+start+select is held for $20 frames,
+                            ; it would've entered the debug menu
+00:17cc MapState.debugnotheld
 00:1837 DoMapStuff
 00:2448 SwitchState
 00:24a2 JumpFrameCallback0  ; init / prepare for fade in (gfx)?
@@ -349,7 +353,7 @@
 
 00:00a5 Multiply?
 00:0d99 CheckMapTrigger?
-00:0d9f CheckMapTrigger?.check ; Task
+00:0d9f CheckMapTrigger?.check ; Object
 00:0db8 CheckMapTrigger?.found
 00:0a95 DoObjectBehavior? ; handles big cloud movement, can't tell what else
 00:112e ZeroMemory
@@ -745,7 +749,7 @@
 0:cb68 wPotionMinigameCards
 0:cb6f wPotionMinigameKinds
 0:ce03 wSelectedDeck?
-0:ce17 wKnowsAllSpells ; bypasses what harry actually knows.  maybe used in testing?
+0:ce17 wKnowsAllSpells ; bypasses what harry actually knows.  probably used by a card combo with this effect
 
 0:c414 wHarryTmp ; ?
 0:c465 wEnemyTmp ; ?
@@ -759,7 +763,7 @@
 ; 6
 ; 7
 
-; XXX this is a task, and tasks are dynamically allocated
+; XXX this is a Object, and Objects are dynamically allocated
 ;   so these aren't universal at all.
 ;0:c5a8 wMapBossCloud?
 ;0:c5a9 wMapBossCloud?.script
@@ -769,35 +773,35 @@
 ;0:c5b9 wMapBossCloud?.y?
 ;0:c5f7 wMapBossCloud?.callback
 
-00:CA67 wTask23
-00:CA16 wTask22
-00:C9C5 wTask21
-00:C974 wTask20
-00:C923 wTask19
-00:C8D2 wTask18
-00:C881 wTask17
-00:C830 wTask16
-00:C7DF wTask15
-00:C78E wTask14
-00:C73D wTask13
-00:C6EC wTask12
-00:C69B wTask11
-00:C64A wTask10
-00:C5F9 wTask9
-00:C5A8 wTask8
-00:C557 wTask7
-00:C506 wTask6
-00:C4B5 wTask5
-00:C464 wTask4
-00:C413 wTask3
-00:C3C2 wTask2
-00:C371 wTask1
-00:C320 wTask0
+00:CA67 wObject23
+00:CA16 wObject22
+00:C9C5 wObject21
+00:C974 wObject20
+00:C923 wObject19
+00:C8D2 wObject18
+00:C881 wObject17
+00:C830 wObject16
+00:C7DF wObject15
+00:C78E wObject14
+00:C73D wObject13
+00:C6EC wObject12
+00:C69B wObject11
+00:C64A wObject10
+00:C5F9 wObject9
+00:C5A8 wObject8
+00:C557 wObject7
+00:C506 wObject6
+00:C4B5 wObject5
+00:C464 wObject4
+00:C413 wObject3
+00:C3C2 wObject2
+00:C371 wObject1
+00:C320 wObject0
 
 
-0:cab8 wCurTaskNum
-0:cab9 wCurTaskFuncID
-0:caba wCurTaskData
+0:cab8 wCurObjectNum
+0:cab9 wCurObjectFuncID
+0:caba wCurObjectData
 
 0:CB17 wMapScriptState
 0:CB18 wMapScriptPosition ; short
@@ -827,6 +831,8 @@
 
 0:cdc0 wDistanceX ; 3-byte
 0:cdc3 wDistanceY ; 3-byte
+
+0:ce16 wDebugHeldFrames
 
 5:d400 wBattleHarry
 5:d401 wBattleHarryMaxHP
@@ -883,7 +889,7 @@
 00:FFBE hFarCallHi
 00:FFcf hState
 00:FFD2 hNewState
-00:ffbb hFreezeMovement ; affects Task1
+00:ffbb hFreezeMovement ; affects Object1
 
 ; DMA
 0:ff51 rHDMA_SrcHi
