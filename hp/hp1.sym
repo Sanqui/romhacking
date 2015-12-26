@@ -108,7 +108,28 @@
 00:2ea4 WriteDEAtBCPlus3
 00:2eae DecAtHLPlus1SaveF ; ????
 
+00:314a HLTimes32
+00:314b HLTimes16
+00:314c HLTimes8
+00:314d HLTimes4
+00:314e HLTimes2
+
 00:2485 IsChangingState
+
+00:25bd Decompress?
+
+00:140c WarpMap?
+00:168b WarpMap?.makeharry
+00:1850 ZeroFFDCandC26C
+03:6f35 ResetMapValues
+01:62c1 LoadMapData ; tiles, objects
+00:32be GetMapBlocks
+01:618a CalcMapSize
+03:7e05 CenterCamera
+04:401d PrepareTextBoxData??
+05:7c44 SetUpProperFadeIn??
+
+00:11bd CopyVScroll
 
 ; there are $18 Objects at a time
 ; starting from CA67 and growing down
@@ -118,6 +139,7 @@
 00:01fa ObjectDone
 00:0203 NextObject
 00:03a0 MakeObject?? ; maybe MakeCloudObject
+00:03d7 InitObject?
 01:41b3 JumpObject
 01:41b4 Objects
 01:5cdf XXXObjectFlags
@@ -336,7 +358,7 @@
 00:24bd JumpFrameCallback3  ; exit (incl. the check)
 00:2494 JumpFrameCallback
 00:2837 SetupScreenAndFade?
-00:2899 FadeToWhite
+00:2899 FadeToWhiteClearState? ; besies fading to white, this also deletes objects, maybe more
 00:28E1 LoadStateTiles
 00:317d AddHL4A
 00:3185 AddHL3A
@@ -719,6 +741,8 @@
 0D:0247 Script_GringottsDungeon2
 
 ; ROM data
+01:5e72 MapDataIdAndVramTargetPointers ; I GUESS
+01:5f9b MapStartCallbacks?
 01:69AB RNGTable
 03:5312 BattleMenuStates
 03:5c1f EnemyStats
@@ -726,11 +750,16 @@
 ;03:648D DiagonAlleyEncounters
 03:65e0 BossGroupsPointers
 05:5c9f ScriptCommandRoutines
+07:4f07 MapBlockPointers
 09:4001 MapScriptTablePointers
 
 ; RAM
+0:c0c5 wEngineFrameSkip
+0:c0c6 wEngineCounter
 0:c30b wMapDoBGAnimations
 0:c30b wMapCyclePalette
+0:cce4 wMapTilesVramLocation
+0:cdd2 wMapTilesStartTile
 0:ccfb wFrameCallbackBank
 0:ccfc wFrameCallback0
 0:ccfe wFrameCallback1
@@ -808,6 +837,15 @@
 0:CB1A wMapScriptMap ; matches hMap+1?
 0:CB1B wMapScriptWait ; short
 
+0:ccec wMapDataId
+0:cd25 wMapStartCallback?
+0:cd27 wMapStartCallbackBank?
+0:cd3a wMapBlocksWidth ; in blocks
+0:cd3c wMapBlocksHeight ; in blocks
+0:cd49 wMapWidth ; in pixels?
+0:cd4b wMapHeight ; in pixels?
+0:cae1 wEnterMapHarryDirection
+
 0:caf8 wNextCloudTimeRandom
 0:caf9 wNextCloudTimeBase
 0:cafa wNextCloudUnk?
@@ -882,9 +920,13 @@
 00:ffa4 hJoyHeld
 00:ffa5 hJoyNew
 00:FFC1 hFarCallA
+00:ffc8 hSCX
+00:ffc9 hSCY
 00:ffd5 hMenuOption
 00:ffd6 hMenuDataPointer
 00:ffd8 hMap
+00:ffd9 hMapEnterWarp?
+00:ffda hNewMap?
 00:FFBD hFarCallLo
 00:FFBE hFarCallHi
 00:FFcf hState
