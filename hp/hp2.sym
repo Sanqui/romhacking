@@ -1,0 +1,10 @@
+0:0008 LdAAtHLPlusA
+0:28e0 RNG
+
+0:CE3E wRNGIndex
+0:cc2e wMenuSkip
+
+6:dcc8 wQuest
+
+0:FFD0 hState
+0:ffd3 hMenuOption

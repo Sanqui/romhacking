@@ -127,6 +127,14 @@
 01:618a CalcMapSize
 03:7e05 CenterCamera
 04:401d PrepareTextBoxData??
+
+04:69ae InitItemMenu ; takes item category
+; gloves are 1, hats are 2, cloaks are 3, belts are 4, shoes are 5
+; items is 0f
+04:67ee wItemCategoryRanges ; from, to
+04:74b4 UseItem
+04:6524 ItemCodePtrTable
+
 05:7c44 SetUpProperFadeIn??
 
 00:11bd CopyVScroll
@@ -767,6 +775,8 @@
 0:cd02 wFrameCallback3
 0:cb29 wSpellMenuData
 0:cb83 wDamage
+0:cb90 wCurItemId
+0:cb91 wMenuSkip
 0:cbe2 wBattler
 0:cbed wSomeBattleDelay?
 0:cc03 wBattleDelayAfterRound
@@ -908,11 +918,20 @@
 5:d500 wSineTable
 
 6:d6ce ScriptStartedWithAButton ; probably,, check 5:5fb0
+
+6:d000 wItemCounts
 6:d053 wNumChocolateFrogs
+
+6:d108 wCurItemNo
+6:d109 wNumItemsOnPage
+
+6:d10c wItemsMenu ; in menu
+
 6:d50a wCardAmounts
 6:d5d5 wScriptVariables
 6:d6c7 wDisableClouds
 6:d6d4 wHarryNoRobe
+
 
 ; HRAM
 00:ff90 hCameraX
