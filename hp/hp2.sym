@@ -1,10 +1,82 @@
 0:0008 LdAAtHLPlusA
 0:28e0 RNG
+00:2ffe GetBankswitchLanguageText
+00:3001 GetBankswitchGivenLanguageText
 
+00:129c Copy
+
+00:0200 Copy256b
+00:0203 Copy224b
+00:0206 Copy192b
+00:0209 Copy160b
+00:020c Copy128b
+00:020f Copy96b
+00:0212 Copy64b
+00:0215 Copy32b
+00:0218 Copy31b
+00:021b Copy30b
+00:021e Copy29b
+00:0221 Copy28b
+00:0224 Copy27b
+00:0227 Copy26b
+00:022a Copy25b
+00:022d Copy24b
+00:0230 Copy23b
+00:0233 Copy22b
+00:0236 Copy21b
+00:0239 Copy20b
+00:023c Copy19b
+00:023f Copy18b
+00:0242 Copy17b
+00:0245 Copy16b
+00:0248 Copy15b
+00:024b Copy14b
+00:024e Copy13b
+00:0251 Copy12b
+00:0254 Copy11b
+00:0257 Copy10b
+00:025a Copy9b
+00:025d Copy8b
+00:0260 Copy7b
+00:0263 Copy6b
+00:0266 Copy5b
+00:0269 Copy4b
+00:026c Copy3b
+00:026f Copy2b
+00:0272 Copy1b
+
+00:30c1 GetText ; hl: text id*3
+00:3557 CopyTextKey ; from wLanguage
+00:355a CopyGivenTextKey ; from a
+00:3585 DecompressText ; hl: text, de: key
+00:358d DecompressText.next
+00:35ad DecompressText.end
+00:35b9 DecompressText.en_uk_redirect
+
+01:660b ShowText ; hl: text id*3, also reformats it
+01:67a7 ReformatText ; for dialogue box
+01:5fed RenderText
+
+06:44e4 LanguageBanks
+; 1d 1f 26 2f 37 3f 47 4f 57 5f
+06:458b SwitchLanguage
+
+1d:4001 TextPointersEnUS
+1d:6c7d TextKeyEnUSLength ; /2
+1d:6c7e TextKeyEnUS
+
+0:cecb wStringNumBak
 0:CE3E wRNGIndex
 0:cc2e wMenuSkip
+0:cd97 wMainMenuOption
+0:cdcc wLanguageBank
+0:cdcd wLanguage
+
 
 6:dcc8 wQuest
+
+7:d600 wTextStaging
+7:da00 wTextKey
 
 0:FFD0 hState
 0:ffd3 hMenuOption
