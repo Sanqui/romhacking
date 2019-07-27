@@ -179,7 +179,12 @@ if __name__ == "__main__":
             bank_offset = (rom.tell() // 0x4000) - lang_bank
             offset = rom.tell() % 0x4000 + 0x4000
             new_offsets.append((bank_offset, offset))
-            rom.write(string.encode('ascii'))
+            string = string.replace('’', "'").replace('…', '...')
+            try:
+                rom.write(string.encode('ascii'))
+            except UnicodeEncodeError:
+                print(f"Warning: string contains non-ASCII: {string}")
+                rom.write(string.encode('ascii', 'replace'))
             writebyte(0xff)
         
         rom.seek(absp(lang_bank, 0x4001))
