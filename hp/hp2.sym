@@ -46,6 +46,7 @@
 00:0272 Copy1b
 
 00:30c1 GetText ; hl: text id*3
+00:33f3 SomeFarcall
 00:3557 CopyTextKey ; from wLanguage
 00:355a CopyGivenTextKey ; from a
 00:3585 DecompressText ; hl: text, de: key
@@ -53,9 +54,14 @@
 00:35ad DecompressText.end
 00:35b9 DecompressText.en_uk_redirect
 
+00:366c VBlank
+
 01:660b ShowText ; hl: text id*3, also reformats it
+01:6628 ShowPreparedText
 01:67a7 ReformatText ; for dialogue box
 01:5fed RenderText
+
+04:42e9 OverworldSelect
 
 06:44e4 LanguageBanks
 ; 1d 1f 26 2f 37 3f 47 4f 57 5f
@@ -72,6 +78,7 @@
 0:cdcc wLanguageBank
 0:cdcd wLanguage
 
+0:cd66 wSelectTextBoxUp
 
 6:dcc8 wQuest
 
