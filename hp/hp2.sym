@@ -3,6 +3,8 @@
 00:2ffe GetBankswitchLanguageText
 00:3001 GetBankswitchGivenLanguageText
 
+00:009c Multiply
+00:0a6c Breakpoint
 00:129c Copy
 00:1249 WriteBlock
 
@@ -48,6 +50,10 @@
 
 00:04e0 SpawnObject?
 
+00:2fc1 GetObjVar1
+00:2fc9 GetObjVar2
+00:2fd1 GetObjVar3
+
 00:30c1 GetText ; hl: text id*3
 00:33f3 SomeFarcall
 00:3557 CopyTextKey ; from wLanguage
@@ -83,6 +89,19 @@
 03:52da LoadBattleBG
 03:53d0 LoadBattlePalette
 
+03:4546 LoadBattlerStats
+03:4564 LoadBattlerStats.player_character
+03:4598 LoadBattlerStats.load_enemy_stats
+03:4973 GetBattlerStatsRAMAddress
+03:5784 EnemyStatsTable
+
+07:5531 LoadBattlerSprite
+07:5562 LoadBattlerSprite.player_character
+07:5595 LoadBattlerSprite.got_address
+07:5426 PlayerCharacterSpritePointers
+07:6008 GetBattlerPosition?
+07:6056 LoadBattler
+
 0a:7ee6 ChooseBattleMusic
 0a:7e04 MapEncounterThemeTable
 
@@ -112,6 +131,7 @@
 0:cecb wStringNumBak
 0:CE3E wRNGIndex
 0:cc2e wMenuSkip
+0:cc25 wCurBattlerPosition
 0:cb6c wEnemyCount
 0:cc48 wEnemyMask
 0:cc49 wBoss
@@ -137,7 +157,7 @@
 7:dfaa wTempo?
 
 0:ffbd hTmp
-0:ff9a hRequestBattler?
+0:ff9a hObjectParam
 0:ffc2 hSpriteBank?
 0:ffca hPrevState
 0:ffcd hState
