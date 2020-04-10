@@ -1,9 +1,10 @@
 0:0008 LdAAtHLPlusA
-0:28e0 RNG
+0:28e6 RNG
 00:2ffe GetBankswitchLanguageText
 00:3001 GetBankswitchGivenLanguageText
 
 00:129c Copy
+00:1249 WriteBlock
 
 00:0200 Copy256b
 00:0203 Copy224b
@@ -45,6 +46,8 @@
 00:026f Copy2b
 00:0272 Copy1b
 
+00:04e0 SpawnObject?
+
 00:30c1 GetText ; hl: text id*3
 00:33f3 SomeFarcall
 00:3557 CopyTextKey ; from wLanguage
@@ -56,12 +59,40 @@
 
 00:366c VBlank
 
+00:394b PlayMusic?
+
 01:660b ShowText ; hl: text id*3, also reformats it
 01:6628 ShowPreparedText
 01:67a7 ReformatText ; for dialogue box
 01:5fed RenderText
 
+03:4d92 LoadBattleScreenLayout
+03:4d98 InitBattleScreen
+03:4dc7 InitBattleScreen.start_battle
+03:4e20 InitBattleScreen.resume_battle
+03:4e32 InitBattleScreen.started_battle
+03:42a5 SetupBattleVariables
+03:432e InitBattleObjects
+03:4335 InitBattleObjects.basilisk
+03:433a InitBattleObjects.not_basilisk
+03:43ee InitBattleObjects.have_ron_or_hermionne
+03:43fa InitBattleObjects.no_ron_or_hermionne
+03:4408 InitBattleObjects.roster_loop
+03:4454 IsBossBattle
+03:4459 GetBossRoster
+03:52da LoadBattleBG
+03:53d0 LoadBattlePalette
+
+0a:7ee6 ChooseBattleMusic
+0a:7e04 MapEncounterThemeTable
+
+03:5f51 EnemyRosterPointers
+03:6c19 SelectRandomRoster
+
 04:42e9 OverworldSelect
+
+05:5dad SomeMenuCheck
+05:5db8 SomeMenuCheck.window_open
 
 06:44e4 LanguageBanks
 ; 1d 1f 26 2f 37 3f 47 4f 57 5f
@@ -71,19 +102,45 @@
 1d:6c7d TextKeyEnUSLength ; /2
 1d:6c7e TextKeyEnUS
 
+0:c0ab wFramerate
+0:cb2d wScriptState
+; 1 = init?
+; 6 = wait
+; 9 = wait for player input
+0:cb2e wScriptAddr
+
 0:cecb wStringNumBak
 0:CE3E wRNGIndex
 0:cc2e wMenuSkip
+0:cb6c wEnemyCount
+0:cc48 wEnemyMask
+0:cc49 wBoss
 0:cd97 wMainMenuOption
 0:cdcc wLanguageBank
 0:cdcd wLanguage
 
 0:cd66 wSelectTextBoxUp
 
+0:cebc wHaveHarry
+0:cebd wHaveRon
+0:cebe wHaveHermione
+0:cebf wHaveLockhartOrFawkes
+; 1 = lockhart, 2 = fawkes
+
 6:dcc8 wQuest
+6:ddc7 wSchoolRobe
+; 4 = have fawkes
 
 7:d600 wTextStaging
 7:da00 wTextKey
 
-0:FFD0 hState
+7:dfaa wTempo?
+
+0:ffbd hTmp
+0:ff9a hRequestBattler?
+0:ffc2 hSpriteBank?
+0:ffca hPrevState
+0:ffcd hState
+0:FFD0 hNextState
 0:ffd3 hMenuOption
+0:ffd6 hMap
