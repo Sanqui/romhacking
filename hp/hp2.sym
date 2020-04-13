@@ -403,8 +403,50 @@
 05:44fa ScriptCommandfb
 05:442f ScriptCommandfc
 
+05:67a1 ScriptSpecialJumptable
+05:6985 ScriptSpecial0 ; days go by
+05:68a5 ScriptSpecial1 ; broken magical car to hogwarts
+05:68bc ScriptSpecial2 ; De-Gnome the Garden
+05:68ef ScriptSpecial3 ; Ride to Gringott's vaults
+05:68db ScriptSpecial4 ; Ride from Gringott's vaults
+05:699f ScriptSpecial5 ; days go by
+05:69b9 ScriptSpecial6 ; days go by
+05:6803 ScriptSpecial7 ; unknown (location map?)
+05:69ed ScriptSpecial8 ; hourglass
+05:6a03 ScriptSpecial9 ; nothing?
+05:6a06 ScriptSpeciala ; nothing?
+05:691d ScriptSpecialb ; nothing?
+05:6a09 ScriptSpecialc ; nothing?
+05:6a0c ScriptSpeciald ; nothing?
+05:6935 ScriptSpeciale ; fade to nighttime
+05:695f ScriptSpecialf ; fade to red/green
+05:6923 ScriptSpecial10 ; bg goes white
+05:692c ScriptSpecial11 ; nothing?
+05:6920 ScriptSpecial12 ; nothing?
+05:690d ScriptSpecial13 ; Choose your deck
+05:69d3 ScriptSpecial14 ; days go by
+05:690a ScriptSpecial15 ; nothing?
+05:68ff ScriptSpecial16 ; nothing?
+05:6902 ScriptSpecial17 ; flying car cutscene
+05:688e ScriptSpecial18 ; broken pixies
+05:686c ScriptSpecial19 ; broken quiddich?
+05:6882 ScriptSpecial1a ; funcitonal quiddich
+05:6867 ScriptSpecial1b ; set up quiddich bar 
+05:6850 ScriptSpecial1c ; broken ghost bowling
+05:682b ScriptSpecial1d ; broken pixies
+05:6836 ScriptSpecial1e ; broken gnome swinging
+05:6823 ScriptSpecial1f ; basillisk slain cutscene
+05:681b ScriptSpecial20 ; ending start
+05:680b ScriptSpecial21 ; Harry, Ron, Lockhart slide down
+05:6813 ScriptSpecial22 ; Harry, Ron, Lockhart fly up
+05:67eb ScriptSpecial23 ; day turns to night
+05:67ee ScriptSpecial24 ; night turns to day
 
-05:70b5 ScriptCommandEnd?
+
+05:70b5 ScriptCommandEnd
+
+05:70bd ScriptCall
+05:70dd ScriptReturn
 
 
 06:44e4 LanguageBanks
@@ -419,7 +461,8 @@
 0:cb19 wScriptParam0?
 0:cb1a wScriptParam1??
 0:cb1a wScriptFlags?
-0:cb1d wScriptReturnAddress
+0:cb1d wScriptReturnAddresses ; space for 5
+0:cc1a wScriptReturnAddressesFF ; relevant only for glitching
 0:cb2c wScriptCallDepth
 0:cb2d wScriptState
 ; 1 = init?
