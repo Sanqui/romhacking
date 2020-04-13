@@ -7,6 +7,8 @@
 00:0a6c Breakpoint
 00:129c Copy
 00:1249 WriteBlock
+00:3173 AddHLATimes3
+00:318b AddHL2ALdHLAtHL
 
 00:0200 Copy256b
 00:0203 Copy224b
@@ -48,12 +50,17 @@
 00:026f Copy2b
 00:0272 Copy1b
 
-00:04e0 SpawnObject?
+00:04e0 SpawnObject
+00:02a6 RunScriptOuter?
 
+00:261e WriteNextStateSubstate00
+00:2621 WriteNextState
 00:2fc1 GetObjVar1
 00:2fc9 GetObjVar2
 00:2fd1 GetObjVar3
 
+00:32c8 IsInSet?
+00:3068 GetTextOther?
 00:30c1 GetText ; hl: text id*3
 00:33f3 SomeFarcall
 00:3557 CopyTextKey ; from wLanguage
@@ -63,6 +70,9 @@
 00:35ad DecompressText.end
 00:35b9 DecompressText.en_uk_redirect
 
+00:34b7 AdvanceScript
+00:347b GetMapScript
+
 00:366c VBlank
 
 00:394b PlayMusic?
@@ -71,6 +81,7 @@
 01:6628 ShowPreparedText
 01:67a7 ReformatText ; for dialogue box
 01:5fed RenderText
+01:6675 PrintTextHLPlusTmp ; prints hl+[hTmp]
 
 03:4d92 LoadBattleScreenLayout
 03:4d98 InitBattleScreen
@@ -86,6 +97,7 @@
 03:4408 InitBattleObjects.roster_loop
 03:4454 IsBossBattle
 03:4459 GetBossRoster
+03:6228 BossRosterPointers
 03:52da LoadBattleBG
 03:53d0 LoadBattlePalette
 
@@ -94,6 +106,21 @@
 03:4598 LoadBattlerStats.load_enemy_stats
 03:4973 GetBattlerStatsRAMAddress
 03:5784 EnemyStatsTable
+03:6c44 GetEnemyStat? ; called by FolioBrutiDetailRenderRes
+
+04:48ff FolioBrutiEnemyIdTable
+04:4953 FolioBrutiNumToEnemyId
+04:4c43 FolioBrutiState
+04:4c72 FolioBrutiState.a
+04:4a67 FolioBrutiDetailStateInit
+04:4c92 FolioBrutiDetailState
+04:4ca6 FolioBrutiDetailState.right
+04:4cc9 FolioBrutiDetailState.left
+04:4cec FolioBrutiDetailState.b
+04:4b45 FolioBrutiDetailRenderPage
+04:4be8 FolioBrutiDetailRenderVuln
+04:4bc5 FolioBrutiDetailRenderRes
+04:4c17 FolioBrutiDetailDrawIcon
 
 07:5531 LoadBattlerSprite
 07:5562 LoadBattlerSprite.player_character
@@ -105,13 +132,280 @@
 0a:7ee6 ChooseBattleMusic
 0a:7e04 MapEncounterThemeTable
 
+0c:4001 ScriptMapPointers
+
 03:5f51 EnemyRosterPointers
 03:6c19 SelectRandomRoster
 
 04:42e9 OverworldSelect
 
-05:5dad SomeMenuCheck
-05:5db8 SomeMenuCheck.window_open
+05:5d8b ActivateScript?
+05:5dad RunScript
+05:5db8 RunScript.window_open
+05:5de0 RunScriptState1
+05:6041 RunScriptState2
+05:712c RunScriptState6
+05:6072 RunScriptState3
+05:6018 RunScriptState5
+05:6018 RunScriptState4
+05:5a7b ScriptCommandPointers
+
+05:5e2f ScriptCommand1
+05:5e40 ScriptCommand2
+05:5e4e ScriptCommand3
+05:5e6f ScriptCommand4
+05:5e79 ScriptCommand5
+05:5e83 ScriptCommand6
+05:5e91 ScriptCommand7
+05:5e99 ScriptCommand8
+05:5ebe ScriptCommand9
+05:5ed5 ScriptCommanda
+05:5eee ScriptCommandb
+05:5f13 ScriptCommandc
+05:5f33 ScriptCommandd
+05:5f53 ScriptCommande
+05:5f73 ScriptCommandf
+05:5f98 ScriptCommand10
+05:5fd1 ScriptCommand11
+05:5fe8 ScriptCommand12
+05:5fff ScriptCommand13
+05:6008 ScriptCommand14
+05:6011 ScriptCommand15
+05:62a6 ScriptCommand16
+05:60bf ScriptCommand17
+05:60ed ScriptCommand18
+05:61cf ScriptCommand19
+05:61cb ScriptCommand1a
+05:6394 ScriptCommand1b
+05:634a ScriptCommand1c
+05:6372 ScriptCommand1d
+05:629d ScriptCommand1e
+05:6108 ScriptCommand1f
+05:6fff ScriptCommand20
+05:6417 ScriptCommand21
+05:644a ScriptCommand22
+05:646e ScriptCommand23
+05:647c ScriptCommand24
+05:6072 ScriptCommand25
+05:6018 ScriptCommand26
+05:6041 ScriptCommand27
+05:653f ScriptCommand28
+05:659d ScriptCommand29
+05:6fe7 ScriptCommand2a
+05:6ff6 ScriptCommand2b
+05:6ad1 ScriptCommand2c
+05:6e3b ScriptCommand2d
+05:6099 ScriptCommand2e
+05:60a0 ScriptCommand2f
+05:60a7 ScriptCommand30
+05:60ad ScriptCommand31
+05:630d ScriptCommand32
+05:64b9 ScriptCommand33
+05:5e2c ScriptCommand34
+05:6d7b ScriptCommand35
+05:6d6d ScriptCommand36
+05:6ace ScriptCommand37
+05:6ae4 ScriptCommand38
+05:6aed ScriptCommand39
+05:6af6 ScriptCommand3a
+05:709f ScriptCommand3b
+05:667f ScriptCommand3c
+05:66c7 ScriptCommand3d
+05:6776 ScriptCommand3e
+05:6b34 ScriptCommand3f
+05:6b57 ScriptCommand40
+05:6b6d ScriptCommand41
+05:6b97 ScriptCommand42
+05:6c4f ScriptCommand43
+05:6c8c ScriptCommand44
+05:700b ScriptCommand45
+05:7025 ScriptCommand46
+05:7031 ScriptCommand47
+05:7060 ScriptCommand48
+05:6706 ScriptCommand49
+05:66d0 ScriptCommand4a
+05:66dc ScriptCommand4b
+05:6706 ScriptCommand4c
+05:6727 ScriptCommand4d
+05:6eb1 ScriptCommand4e
+05:6ec1 ScriptCommand4f
+05:7017 ScriptCommand50
+05:6526 ScriptCommand51
+05:6d61 ScriptCommand52
+05:7088 ScriptCommand53
+05:6738 ScriptCommand54
+05:679f ScriptCommand55
+05:6a0f ScriptCommand56
+05:6a18 ScriptCommand57
+05:6a21 ScriptCommand58
+05:6a2a ScriptCommand59
+05:6a38 ScriptCommand5a
+05:6a4a ScriptCommand5b
+05:6a5a ScriptCommand5c
+05:6a68 ScriptCommand5d
+05:6a71 ScriptCommand5e
+05:6a8b ScriptCommand5f
+05:6d15 ScriptCommand60
+05:6d1e ScriptCommand61
+05:5fb6 ScriptCommand62
+05:6cf4 ScriptCommand63
+05:6d91 ScriptCommand64
+05:6d9d ScriptCommand65
+05:6da9 ScriptCommand66
+05:6dac ScriptCommand67
+05:6dde ScriptCommand68
+05:6e65 ScriptCommand69
+05:6e85 ScriptCommand6a
+05:70a6 ScriptCommand6b
+05:6ed5 ScriptCommand6c
+05:6f19 ScriptCommand6d
+05:6269 ScriptCommand6e
+05:6483 ScriptCommand6f
+05:6491 ScriptCommand70
+05:612c ScriptCommand71
+05:6f2b ScriptCommand72
+05:661c ScriptCommand73
+05:65f8 ScriptCommand74
+05:6f3d ScriptCommand75
+05:60f7 ScriptCommand76
+05:615f ScriptCommand77
+05:613b ScriptCommand78
+05:6f48 ScriptCommand79
+05:6f85 ScriptCommand7a
+05:6f96 ScriptCommand7b
+05:6fc0 ScriptCommand7c
+05:678e ScriptCommand7d
+05:6fdb ScriptCommand7e
+05:649f ScriptCommand7f
+05:4160 ScriptCommand80
+05:4160 ScriptCommand81
+05:4160 ScriptCommand82
+05:4160 ScriptCommand83
+05:4160 ScriptCommand84
+05:4160 ScriptCommand85
+05:4160 ScriptCommand86
+05:4160 ScriptCommand87
+05:4160 ScriptCommand88
+05:4160 ScriptCommand89
+05:4160 ScriptCommand8a
+05:4160 ScriptCommand8b
+05:4160 ScriptCommand8c
+05:4265 ScriptCommand8d
+05:4784 ScriptCommand8e
+05:4279 ScriptCommand8f
+05:428f ScriptCommand90
+05:429d ScriptCommand91
+05:42a7 ScriptCommand92
+05:43b5 ScriptCommand93
+05:43d3 ScriptCommand94
+05:43e5 ScriptCommand95
+05:43eb ScriptCommand96
+05:43f9 ScriptCommand97
+05:42a9 ScriptCommand98
+05:4317 ScriptCommand99
+05:4340 ScriptCommand9a
+05:4361 ScriptCommand9b
+05:42b9 ScriptCommand9c
+05:45ae ScriptCommand9d
+05:4390 ScriptCommand9e
+05:4301 ScriptCommand9f
+05:4af6 ScriptCommanda0
+05:4160 ScriptCommanda1
+05:4deb ScriptCommanda2
+05:48b9 ScriptCommanda3
+05:48bd ScriptCommanda4
+05:48c1 ScriptCommanda5
+05:48bb ScriptCommanda6
+05:48bf ScriptCommanda7
+05:48c3 ScriptCommanda8
+05:4d94 ScriptCommanda9
+05:4d3e ScriptCommandaa
+05:4d42 ScriptCommandab
+05:4cfe ScriptCommandac
+05:4d10 ScriptCommandad
+05:4637 ScriptCommandae
+05:4945 ScriptCommandaf
+05:49ad ScriptCommandb0
+05:4a83 ScriptCommandb1
+05:4443 ScriptCommandb2
+05:4445 ScriptCommandb3
+05:4447 ScriptCommandb4
+05:436e ScriptCommandb5
+05:4370 ScriptCommandb6
+05:4372 ScriptCommandb7
+05:4aa5 ScriptCommandb8
+05:4aa7 ScriptCommandb9
+05:4aa9 ScriptCommandba
+05:4ab9 ScriptCommandbb
+05:4abb ScriptCommandbc
+05:4abd ScriptCommandbd
+05:495b ScriptCommandbe
+05:495d ScriptCommandbf
+05:495f ScriptCommandc0
+05:4449 ScriptCommandc1
+05:4460 ScriptCommandc2
+05:4466 ScriptCommandc3
+05:4486 ScriptCommandc4
+05:4484 ScriptCommandc5
+05:455e ScriptCommandc6
+05:4560 ScriptCommandc7
+05:45c8 ScriptCommandc8
+05:45e1 ScriptCommandc9
+05:45fa ScriptCommandca
+05:4613 ScriptCommandcb
+05:462c ScriptCommandcc
+05:4919 ScriptCommandcd
+05:4e92 ScriptCommandce
+05:4b5a ScriptCommandcf
+05:4c0a ScriptCommandd0
+05:4901 ScriptCommandd1
+05:4d66 ScriptCommandd2
+05:4d46 ScriptCommandd3
+05:4d74 ScriptCommandd4
+05:48c5 ScriptCommandd5
+05:4498 ScriptCommandd6
+05:48c7 ScriptCommandd7
+05:42dd ScriptCommandd8
+05:4d54 ScriptCommandd9
+05:44a8 ScriptCommandda
+05:48d7 ScriptCommanddb
+05:50cc ScriptCommanddc
+05:4388 ScriptCommanddd
+05:44c6 ScriptCommandde
+05:50cf ScriptCommanddf
+05:4403 ScriptCommande0
+05:4641 ScriptCommande1
+05:464b ScriptCommande2
+05:467b ScriptCommande3
+05:46a9 ScriptCommande4
+05:468b ScriptCommande5
+05:4c4f ScriptCommande6
+05:4c79 ScriptCommande7
+05:4c84 ScriptCommande8
+05:44d7 ScriptCommande9
+05:4570 ScriptCommandea
+05:4586 ScriptCommandeb
+05:4cc5 ScriptCommandec
+05:4cd3 ScriptCommanded
+05:4cdb ScriptCommandee
+05:4abf ScriptCommandef
+05:4acf ScriptCommandf0
+05:4593 ScriptCommandf1
+05:4c22 ScriptCommandf2
+05:47b6 ScriptCommandf3
+05:4516 ScriptCommandf4
+05:4518 ScriptCommandf5
+05:4524 ScriptCommandf6
+05:4542 ScriptCommandf7
+05:46d3 ScriptCommandf8
+05:46eb ScriptCommandf9
+05:4c96 ScriptCommandfa
+05:44fa ScriptCommandfb
+05:442f ScriptCommandfc
+
+
+05:70b5 ScriptCommandEnd?
+
 
 06:44e4 LanguageBanks
 ; 1d 1f 26 2f 37 3f 47 4f 57 5f
@@ -122,14 +416,22 @@
 1d:6c7e TextKeyEnUS
 
 0:c0ab wFramerate
+0:cb19 wScriptParam0?
+0:cb1a wScriptParam1??
+0:cb1a wScriptFlags?
+0:cb1d wScriptReturnAddress
+0:cb2c wScriptCallDepth
 0:cb2d wScriptState
 ; 1 = init?
 ; 6 = wait
 ; 9 = wait for player input
 0:cb2e wScriptAddr
+0:cb30 wScriptMap ; matches hMap+1?
 
 0:cecb wStringNumBak
 0:CE3E wRNGIndex
+0:ce4b wEnemyInformousBitset
+0:ce5b wEnemyEncounteredBitset 
 0:cc2e wMenuSkip
 0:cc25 wCurBattlerPosition
 0:cb6c wEnemyCount
@@ -149,6 +451,7 @@
 
 6:dcc8 wQuest
 6:ddc7 wSchoolRobe
+6:ddc5 wMapScriptVar ; used by scripts
 ; 4 = have fawkes
 
 7:d600 wTextStaging
@@ -158,9 +461,16 @@
 
 0:ffbd hTmp
 0:ff9a hObjectParam
+0:ff9b hObjectX
+0:ff9d hObjectY
+0:ffa6 hJoypad
 0:ffc2 hSpriteBank?
 0:ffca hPrevState
 0:ffcd hState
+0:ffce hSubstate0
+0:ffcf hSubstate1
 0:FFD0 hNextState
+0:ffd1 hNextSubstate0
+0:ffd2 hNextSubstate1
 0:ffd3 hMenuOption
 0:ffd6 hMap
