@@ -97,7 +97,7 @@
 00:34ba CallReturnTo06
 
 00:34e9 GetAddressFromBank9?
-00:3502 GetScriptAddress
+00:3502 AdvanceScript
 00:3525 GetScriptCommand ; into a and de
 
 00:2e82 GetAtBCPlus1
@@ -116,14 +116,17 @@
 
 00:2485 IsChangingState
 
-00:25bd Decompress?
+00:25bd Decompress ; a = flags
 
+00:13ff AddBCATimes3
 00:140c WarpMap?
 00:168b WarpMap?.makeharry
 00:1850 ZeroFFDCandC26C
 03:6f35 ResetMapValues
 01:62c1 LoadMapData ; tiles, objects
-00:32be GetMapBlocks
+00:32be GetGraphicsPointer?
+00:32e1 LoadFont?
+00:3356 GetLanguage
 01:618a CalcMapSize
 03:7e05 CenterCamera
 04:401d PrepareTextBoxData??
@@ -133,7 +136,9 @@
 ; items is 0f
 04:67ee wItemCategoryRanges ; from, to
 04:74b4 UseItem
-04:6524 ItemCodePtrTable
+04:63c0 UseItemState?
+04:6422 UseItemStateA
+04:6524 ItemEffectTable
 
 05:7c44 SetUpProperFadeIn??
 
@@ -367,7 +372,9 @@
 00:2494 JumpFrameCallback
 00:2837 SetupScreenAndFade?
 00:2899 FadeToWhiteClearState? ; besies fading to white, this also deletes objects, maybe more
-00:28E1 LoadStateTiles
+00:28E1 LoadStateTilesAndTilemap
+00:2916 LoadStateTiles
+
 00:317d AddHL4A
 00:3185 AddHL3A
 00:318c AddHL2A
@@ -432,13 +439,13 @@
 04:6b9c XEatChocolateFrog
 04:6bbd GiveCard
 05:5f9b StartScript ; takes e
-05:5fe1 AdvanceScript
-05:5fee AdvanceScript.advance
-05:6011 AdvanceScriptState1
-05:627b AdvanceScriptState2
-05:7468 AdvanceScriptState6
-05:62ac AdvanceScriptState3
-05:6252 AdvanceScriptState45
+05:5fe1 RunScript
+05:5fee RunScript.advance
+05:6011 RunScriptState1
+05:627b RunScriptState2
+05:7468 RunScriptState6
+05:62ac RunScriptState3
+05:6252 RunScriptState45
 ;       ScriptCommand00 = terminator
 05:6060 ScriptCommand01
 05:6071 ScriptCommand02
@@ -670,6 +677,9 @@
 05:4749 ScriptCommande4
 05:7BF8 ScriptCommande5
 
+05:73e1 ScriptCall
+05:7401 ScriptReturn
+
 
 06:5db3 GetRandomCardFromSet
 06:5ad5 RandomCardSets
@@ -762,12 +772,19 @@
 09:4001 MapScriptTablePointers
 
 ; RAM
+0:c000 wOAM
+0:c0b5 wSP
+0:c0ce wLCDInt
 0:c0c5 wEngineFrameSkip
 0:c0c6 wEngineCounter
+0:c26d wCompressionFlags??
+0:cdb7 wCompressionDest
+
 0:c30b wMapDoBGAnimations
 0:c30b wMapCyclePalette
 0:cce4 wMapTilesVramLocation
 0:cdd2 wMapTilesStartTile
+0:cddd wLanguage
 0:ccfb wFrameCallbackBank
 0:ccfc wFrameCallback0
 0:ccfe wFrameCallback1
@@ -782,6 +799,7 @@
 0:cc03 wBattleDelayAfterRound
 0:cc04 wEnemiesPresent ; bitfield
 0:cc05 wBossGroup
+0:cc06 wSomeBattleFlags
 0:cde0 wHarry
 0:cdfe wKnownSpells ; short bitfield
 0:ce04 wRNGIndex
@@ -801,6 +819,7 @@
 ; 5
 ; 6
 ; 7
+0:cb16 wScriptCallDepth
 
 ; XXX this is a Object, and Objects are dynamically allocated
 ;   so these aren't universal at all.
@@ -842,10 +861,10 @@
 0:cab9 wCurObjectFuncID
 0:caba wCurObjectData
 
-0:CB17 wMapScriptState
-0:CB18 wMapScriptPosition ; short
-0:CB1A wMapScriptMap ; matches hMap+1?
-0:CB1B wMapScriptWait ; short
+0:CB17 wScriptState
+0:CB18 wScriptAddr ; short
+0:CB1A wScriptMap ; matches hMap+1?
+0:CB1B wScriptWait ; short
 
 0:ccec wMapDataId
 0:cd25 wMapStartCallback?
@@ -917,7 +936,8 @@
 
 5:d500 wSineTable
 
-6:d6ce ScriptStartedWithAButton ; probably,, check 5:5fb0
+6:d6ce wScriptStartedWithAButton? ; probably,, check 5:5fb0
+6:d6cf wLastBattleResult
 
 6:d000 wItemCounts
 6:d053 wNumChocolateFrogs

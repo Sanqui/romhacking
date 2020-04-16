@@ -27,10 +27,11 @@ def readbyte():
 COMMANDS = {
     0x00: "END",
     0x01: "RET",
+    0x02: "CALL",
     0x03: "SKIP",
     0x04: "SKIPIF",
     0x05: "SKIPIFNOT",
-    0x06: "CALL",
+    0x06: "FARCALL",
     0x07: "JUMP",
     0x08: "JUMPVAR",
     0x09: "EQUAL",
@@ -73,6 +74,7 @@ COMMANDS = {
     0x48: "LEAVEGROUP",
     0x49: "RESTORE",
     0x4a: "WHITE",
+    0x4c: "BLACK',
     0x51: "SELECTMSG",
     0x54: "SHOP/POINTS",
     0x55: "SPECIAL",
@@ -81,6 +83,7 @@ COMMANDS = {
     0x5f: "BLOCKING",
     0x61: "HEAL", # bool, should msg appear
     0x62: "SETQUEST",
+    0x63: "RANDOM",
     0x6c: "GETEQUIP",
     0x69: "NUMITEM", # puts number of item in 254
     0x6a: "GIVESPELL",

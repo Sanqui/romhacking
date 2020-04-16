@@ -20,16 +20,24 @@ def readbyte():
 
 COMMANDS = {
     0x00: "END",
+    0x01: "RET",
+    0x02: "CALL",
     0x03: "SKIP",
     0x04: "SKIPIF",
     0x05: "SKIPIFNOT",
+    0x06: "FARCALL",
+    0x07: "JUMP",
+    0x08: "JUMPVAR",
     0x09: "EQUAL",
     0x0b: "LESSTHAN",
     0x0f: "SET",
+    0x13: "SETX",
+    0x14: "SETY",
     0x15: "PARAM0",
     0x16: "PARAM1",
     0x17: "PARAM2",
     0x19: "MOVE",
+    0x1b: "STOPMOVE",
     0x1e: "HIDE",
     0x21: "ANIM",
     0x27: "WAIT",
@@ -38,6 +46,7 @@ COMMANDS = {
     0x2c: "QUESTDONE",
     0x2e: "SFX",
     0x2f: "MUSIC",
+    0x30: "STOPMUSIC",
     0x33: "MSG",
     0x35: "BOSSBATTLE",
     0x38: "GIVEITEM",
@@ -54,6 +63,9 @@ COMMANDS = {
     0x42: "TAKEPOINTS",
     0x43: "GIVESP",
     0x44: "TAKESP",
+    0x46: "SWAPN",
+    0x47: "JOINGROUP",
+    0x48: "LEAVEGROUP",
     0x49: "RESTORE",
     0x4a: "WHITE",
     0x51: "SELECTMSG",
@@ -64,6 +76,7 @@ COMMANDS = {
     0x5f: "BLOCKING",
     0x61: "HEAL", # bool, should msg appear
     0x62: "SETQUEST",
+    0x63: "RANDOM",
     0x6c: "GETEQUIP",
     0x69: "NUMITEM", # puts number of item in 254
     0x6a: "GIVESPELL",
@@ -101,6 +114,7 @@ for x in range(1048*40):
     if k >= 23441 and map_num == 67: break
     if rom.tell() in map_script_addresses:
         k = 0
+        km = 0
         map_num = map_script_addresses.index(rom.tell())
         map_name = GAME_STRINGS[2115+map_num]
         if map_num == 0:
@@ -124,6 +138,7 @@ for x in range(1048*40):
             command = readbyte() # first byte in bank is byte id
         continue
     k += 1
+    km += 1
     end = False
     if command == 0 and rom.tell() in map_script_addresses:
         print "{:05}| END\n".format(k)
@@ -131,6 +146,7 @@ for x in range(1048*40):
     elif command == 0:
         params = [readbyte(), readbyte()]
         k += 2
+        km += 2
         if params[0] != 0 or params[1] != 0:
             rom.seek(rom.tell()-2)
             k -= 2
@@ -142,6 +158,7 @@ for x in range(1048*40):
         command_name = COMMANDS.get(command, "?")
         params = [readbyte(), readbyte()]
         k += 2
+        km += 2
         
         string = ""
         text = ""
@@ -166,6 +183,8 @@ for x in range(1048*40):
             string = GAME_STRINGS[1621+params[0]]
         elif "SKIP" in command_name:
             string = "to {}".format(k - 3 + 3*params[0])
+        elif command_name in ("JUMP", "CALL"):
+            string = "to {:02}:{:05}".format(script_params[0], params[0]*0x100 + params[1])
         elif command_name == "PARAM0": script_params[0] = params[0]
         elif command_name == "PARAM1": script_params[1] = params[0]
         elif command_name == "PARAM2": script_params[2] = params[0]
@@ -196,7 +215,7 @@ for x in range(1048*40):
         if string: string = "; "+string+""
         print "@{:2X}:{:4X}  {:02}:{:05}| ${:02x} {:11} {:3} {:3}  {}".format(
             (rom.tell()-3)/0x4000, (rom.tell()-3)%0x4000+0x4000,
-            map_num, k-3, command, command_name, params[0], params[1], string)
+            map_num, km-3, command, command_name, params[0], params[1], string)
         if text: print " "+text
     if command == 0:
         print "     |"
