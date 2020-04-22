@@ -135,10 +135,29 @@
 ; gloves are 1, hats are 2, cloaks are 3, belts are 4, shoes are 5
 ; items is 0f
 04:67ee wItemCategoryRanges ; from, to
-04:74b4 UseItem
+04:74b4 ItemMenuStateA
 04:63c0 UseItemState?
 04:6422 UseItemStateA
+04:6acf UseItem
 04:6524 ItemEffectTable
+04:6adc ItemEffectJumptable
+04:6af6 ItemEffect0CantUseNow
+04:6b12 ItemEffect1RecoverSP
+04:6b40 ItemEffect2RecoverMP
+04:6b6e ItemEffect3FlavorSP
+04:6be6 ItemEffect4List
+04:6c35 ItemEffect5Cauldron
+04:6cd8 ItemEffect6NothingHappens
+04:6d91 ItemEffect7
+04:6b9c ItemEffect8ChocolateFrog
+04:6b9c UseChocolateFrog
+04:6c0e ItemEffect9IngredientEncyclopedia
+04:6cac ItemEffecta
+04:6c7e ItemEffectbDisgusting
+04:6d4b ItemEffectc
+04:6da0 ItemEnd?
+04:6da5 ItemEndSuccess?
+04:6da7 ItemEndFailure?
 
 05:7c44 SetUpProperFadeIn??
 
@@ -168,7 +187,7 @@
 03:40f1 HandleObject01Input?.newcloud
 03:4106 HandleObject01Input?.nonewcloud
 03:415f HandleObject01Input?.notCrossingTheLake
-03:4184 HandleObject01Input?.isCrossingTheLake
+03:4184 HandleObject01Input?.isCrossingTheLakeUseItemStateA
 03:439b GeneateCloud
 
 00:0c4c Object02
@@ -374,6 +393,7 @@
 00:2899 FadeToWhiteClearState? ; besies fading to white, this also deletes objects, maybe more
 00:28E1 LoadStateTilesAndTilemap
 00:2916 LoadStateTiles
+00:3256 IsBitNumberInHL??
 
 00:317d AddHL4A
 00:3185 AddHL3A
@@ -409,6 +429,7 @@
 03:482b LoadBattlerStats
 03:484a LoadBattlerStats.isharry
 03:4de5 GetBattlerAddress
+03:4de8 GetBattlerAddressA
 03:6b60 PickEncounterGroup
 03:48b5 XPostDamageCalc
 03:532b XEnterBattleState
@@ -419,6 +440,9 @@
 03:56B4 BattleRunFailConfirmation
 03:57e0 EndTurn?
 03:7c6d SetUpScanlineEffects?
+
+03:477f DetermineBattleRewards
+03:4814 DetermineBattleRewards.no_item
 
 03:6c37 CalcDistance
 03:6bef CalcDistanceX
@@ -436,8 +460,9 @@
 01:4eaf FindOverlapWithHarry.compare
 01:4ec2 CmpWord
 
-04:6b9c XEatChocolateFrog
 04:6bbd GiveCard
+04:6a4b IncreaseItemCount
+
 05:5f9b StartScript ; takes e
 05:5fe1 RunScript
 05:5fee RunScript.advance
@@ -680,10 +705,16 @@
 05:73e1 ScriptCall
 05:7401 ScriptReturn
 
-
+06:45b7 VictoryStateA
+06:45ce VictoryStateA.next_item
+06:45fa VictoryStateA.done_item
+06:45ed VictoryStateA.not_card
+06:45ff VictoryStateA.done_items
 06:5db3 GetRandomCardFromSet
 06:5ad5 RandomCardSets
 06:5aff RandomCardMappings
+06:604d GiveExp
+06:6066 GiveSickles
 
 06:402d PotionMinigameEnter
 07:6d7f XLoadDamage
@@ -774,6 +805,7 @@
 ; RAM
 0:c000 wOAM
 0:c0b5 wSP
+0:c0b7 wOAMEndPtr
 0:c0ce wLCDInt
 0:c0c5 wEngineFrameSkip
 0:c0c6 wEngineCounter
@@ -881,6 +913,10 @@
 0:cafb wCloudTimeRandom
 0:cafc wCloudTimeBase
 
+0:cbf8 wBattleEXPGained ; word
+0:cbfa wBattleSicklesFound ; word
+0:cbfc wBattleNumItemsFound
+0:cbfd wBattleItemsFound ; space for 3
 0:cbf5 wNextCloudCountdown
 
 ; probably the bounding box/corners
@@ -958,6 +994,7 @@
 00:ff92 hCameraY
 00:ffa4 hJoyHeld
 00:ffa5 hJoyNew
+00:ffbc hTmp
 00:FFC1 hFarCallA
 00:ffc8 hSCX
 00:ffc9 hSCY
