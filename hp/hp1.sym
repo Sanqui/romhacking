@@ -107,6 +107,7 @@
 00:2e9e WriteAtBCPlus2
 00:2ea4 WriteDEAtBCPlus3
 00:2eae DecAtHLPlus1SaveF ; ????
+00:275f WeirdRNG
 
 00:314a HLTimes32
 00:314b HLTimes16
@@ -158,6 +159,27 @@
 04:6da0 ItemEnd?
 04:6da5 ItemEndSuccess?
 04:6da7 ItemEndFailure?
+04:7491 EquipmentMenuChangeSelection??
+04:7446 EquipmentMenuSelectA??
+04:5ffe ApplyEquipment??
+04:6843 ApplyEquipmentSwapItemCounts?
+04:68b5 ApplyEquipmentStatBoosts
+04:68c8 ApplyEquipmentStatBoosts.GetEquipment
+04:68dc ApplyEquipmentStatBoosts.ApplyEquipment
+04:6452 EquipmentStatBoostTable ; order: sp str def mstr mdef pri
+
+06:5f3c NewGameInitHarry
+06:5f8f RecalculateHarryStats
+06:6011 GetByteStatFromTable
+06:6015 GetWordStatFromTable
+
+06:58e1 LevelSPTable
+06:59a9 LevelMPTable
+06:5a71 LevelPriorityTable
+06:5751 LevelStrengthTable
+06:57b5 LevelDefenseTable
+06:5819 LevelMagicStrTable
+06:587d LevelMagicDefTable
 
 05:7c44 SetUpProperFadeIn??
 
@@ -408,6 +430,7 @@
 00:3332 XLoadBattleBackgroundTilemap
 00:393e PlayPCM
 
+00:0098 CplDE?
 00:00a5 Multiply?
 00:0d99 CheckMapTrigger?
 00:0d9f CheckMapTrigger?.check ; Object
@@ -439,7 +462,35 @@
 03:56e4 ClearBattleText?
 03:56B4 BattleRunFailConfirmation
 03:57e0 EndTurn?
+03:596a BattleSelectSpell
+03:5a67 IsSpellAOE??
+03:6146 SpellAOETable
+03:5a7c GetSpellMPCosts
+03:5a8c SpellTakeMP
+03:4a83 GetSpellDamage
+03:48ef HitBattler
+03:4a18 DetermineMiss
+03:4a1e DetermineMiss.harry
+03:4a40 DetermineMiss.hit
+03:4a42 DetermineMiss.enemy
+03:4a5b DetermineMiss.miss
+03:4b15 CalcDamageFlipendo?
+03:4b23 CalcDamageVermillious?
+03:4a9e DamageFlipendoAndPhysical
+03:4ac2 DamageVermillious
+03:4ad6 DamageVerdimillious
+03:4aea DamageIncendio
+03:4afc DamageMagicCommon
+; Under some conditions (if the enemy has some flag set), the damage from Verdimillious Tria and Incendio Tria are halved.  I'm not sure where that flag comes from
+03:4b9d QuadrupleDamageUnderSomeCondition?
+03:4bbb HalveDamageOfVerdiInceTria
+03:4a61 CalcCrit
+03:4bcc CalcDamageRandomVariance
+03:6120 SpellDamageTable
+03:6131 SpellMPCosts
 03:7c6d SetUpScanlineEffects?
+03:4b6f GetTargetVariableIntoDE
+03:4b7a GetBattlerVariableIntoHL
 
 03:477f DetermineBattleRewards
 03:4814 DetermineBattleRewards.no_item
@@ -462,7 +513,9 @@
 
 04:6bbd GiveCard
 04:6a4b IncreaseItemCount
+04:6a7f DecreaseItemCount
 
+05:512d GetBattlerCondition?
 05:5f9b StartScript ; takes e
 05:5fe1 RunScript
 05:5fee RunScript.advance
@@ -705,6 +758,7 @@
 05:73e1 ScriptCall
 05:7401 ScriptReturn
 
+06:44a7 VictoryStateHandleItems?
 06:45b7 VictoryStateA
 06:45ce VictoryStateA.next_item
 06:45fa VictoryStateA.done_item
@@ -823,18 +877,32 @@
 0:cd00 wFrameCallback2
 0:cd02 wFrameCallback3
 0:cb29 wSpellMenuData
+0:cb29 wSpellMenu0Cost
+0:cb2a wSpellMenu1StringId ; word
 0:cb83 wDamage
 0:cb90 wCurItemId
 0:cb91 wMenuSkip
 0:cbe2 wBattler
+0:cbe7 wTarget
+0:cbe6 wCurSpell
 0:cbed wSomeBattleDelay?
 0:cc03 wBattleDelayAfterRound
 0:cc04 wEnemiesPresent ; bitfield
 0:cc05 wBossGroup
 0:cc06 wSomeBattleFlags
 0:cde0 wHarry
+0:cde1 wHarrySP
+0:cde3 wHarryMP
+0:cde9 wHarryPriority ; agility = 150 - priority?
+0:cdeb wHarryStrength
+0:cded wHarryDefense
+0:cdec wHarryMagicStr
+0:cdee wHarryMagicDef
+0:cdef wHarryMagicDef
+0:cdf0 wHarryMagicDef
 0:cdfe wKnownSpells ; short bitfield
 0:ce04 wRNGIndex
+0:ce0b wSureHitCounter
 0:cb68 wPotionMinigameCards
 0:cb6f wPotionMinigameKinds
 0:ce03 wSelectedDeck?
@@ -905,6 +973,7 @@
 0:cd3c wMapBlocksHeight ; in blocks
 0:cd49 wMapWidth ; in pixels?
 0:cd4b wMapHeight ; in pixels?
+0:cdfb wHarryLevel
 0:cae1 wEnterMapHarryDirection
 
 0:caf8 wNextCloudTimeRandom
@@ -942,6 +1011,8 @@
 5:d403 wBattleHarryMaxMP
 5:d405 wBattleHarryHP
 5:d407 wBattleHarryMP
+5:d40b wBattleHarryStr
+5:d40c wBattleHarryMagicStr
 
 5:d419 wEnemy1
 5:d41a wEnemy1MaxHP
@@ -972,6 +1043,8 @@
 
 5:d500 wSineTable
 
+6:d6ca wSPBoost
+6:d6cb wMPBoost
 6:d6ce wScriptStartedWithAButton? ; probably,, check 5:5fb0
 6:d6cf wLastBattleResult
 

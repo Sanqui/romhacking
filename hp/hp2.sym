@@ -59,6 +59,13 @@
 00:2fc9 GetObjVar2
 00:2fd1 GetObjVar3
 
+00:25ca GetStateFunc?
+00:2691 RunState?
+
+07:442e CheatMenuSelect??
+07:44ab BrutiCheat?
+07:44be CardComboCheat?
+
 00:32c8 IsInSet?
 00:3068 GetTextOther?
 00:30c1 GetText ; hl: text id*3
@@ -491,6 +498,7 @@
 0:cebe wHaveHermione
 0:cebf wHaveLockhartOrFawkes
 ; 1 = lockhart, 2 = fawkes
+0:cec5 wUnkSetByPortraitTextCheat
 
 6:dcc8 wQuest
 6:ddc7 wSchoolRobe
