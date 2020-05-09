@@ -1,3 +1,488 @@
+; States
+
+; State 00: 
+06:50df State00Enter
+06:50e5 State00Init
+06:24c5 State00
+06:510c State00Leave
+
+; State 01: 
+06:502c State01Enter
+06:503a State01Init
+06:24c5 State01
+06:503d State01Leave
+
+; State 02: 
+06:4ff4 State02Enter
+06:4ffa State02Init
+06:24c5 State02
+06:4ffd State02Leave
+
+; State 03: 
+05:404f State03Enter
+05:4055 State03Init
+05:24c5 State03
+05:4133 State03Leave
+
+; State 04: 
+01:504f State04Enter
+01:507d State04Init
+01:24c5 State04
+01:509f State04Leave
+
+; State 05: 
+01:5055 State05Enter
+01:2493 State05Init
+01:24c5 State05
+01:509f State05Leave
+
+; State 06: 
+01:75ba State06Enter
+01:75c0 State06Init
+01:24c5 State06
+01:762a State06Leave
+
+; State 07: 
+01:781c State07Enter
+01:2493 State07Init
+01:24c5 State07
+01:7867 State07Leave
+
+; State 08: 
+01:78b3 State08Enter
+01:2493 State08Init
+01:24c5 State08
+01:762a State08Leave
+
+; State 09: 
+06:4726 State09Enter
+06:472f State09Init
+06:24c5 State09
+06:4786 State09Leave
+
+; State 0a: 
+04:54ad State0aEnter
+04:54b3 State0aInit
+04:24c5 State0a
+04:550b State0aLeave
+
+; State 0b: 
+00:140c State0bEnter
+00:2493 State0bInit
+00:177f State0b
+00:179d State0bLeave
+
+; State 0c: 
+03:43d5 State0cEnter
+03:2493 State0cInit
+03:177f State0c
+03:179d State0cLeave
+
+; State 0d: 
+04:2493 State0dEnter
+04:2493 State0dInit
+04:24c5 State0d
+04:4520 State0dLeave
+
+; State 0e: 
+05:4321 State0eEnter
+05:4327 State0eInit
+05:24c5 State0e
+05:43b3 State0eLeave
+
+; State 0f: 
+04:5bcd State0fEnter
+04:5c18 State0fInit
+04:24c5 State0f
+04:5e55 State0fLeave
+
+; State 10: 
+04:5be5 State10Enter
+04:2493 State10Init
+04:24c5 State10
+04:5e55 State10Leave
+
+; State 11: 
+04:5fc6 State11Enter
+04:2493 State11Init
+04:24c5 State11
+04:6219 State11Leave
+
+; State 12: 
+04:5ffe State12Enter
+04:2493 State12Init
+04:24c5 State12
+04:6219 State12Leave
+
+; State 13: 
+04:6f18 State13Enter
+04:2493 State13Init
+04:24c5 State13
+04:73d9 State13Leave
+
+; State 14: 
+04:6316 State14Enter
+04:2493 State14Init
+04:24c5 State14
+04:6403 State14Leave
+
+; State 15: 
+04:6351 State15Enter
+04:2493 State15Init
+04:24c5 State15
+04:6403 State15Leave
+
+; State 16: 
+04:77e9 State16Enter
+04:2493 State16Init
+04:24c5 State16
+04:784f State16Leave
+
+; State 17: 
+05:4548 State17Enter
+05:4553 State17Init
+05:24c5 State17
+05:45aa State17Leave
+
+; State 18: 
+05:4822 State18Enter
+05:482d State18Init
+05:24c5 State18
+05:48a0 State18Leave
+
+; State 19: 
+03:532b State19Enter
+03:534f State19Init
+03:24cb State19
+03:54a6 State19Leave
+
+; State 1a: 
+03:5502 State1aEnter
+03:2493 State1aInit
+03:24cb State1a
+03:54a6 State1aLeave
+
+; State 1b: 
+03:552e State1bEnter
+03:2493 State1bInit
+03:24cb State1b
+03:55b5 State1bLeave
+
+; State 1c: 
+03:553b State1cEnter
+03:2493 State1cInit
+03:24cb State1c
+03:55fe State1cLeave
+
+; State 1d: 
+03:5057 State1dEnter
+03:2493 State1dInit
+03:24cb State1d
+03:50f8 State1dLeave
+
+; State 1e: 
+03:50b1 State1eEnter
+03:2493 State1eInit
+03:24cb State1e
+03:5236 State1eLeave
+
+; State 1f: 
+03:556a State1fEnter
+03:2493 State1fInit
+03:24cb State1f
+03:56b4 State1fLeave
+
+; State 20: 
+03:56cc State20Enter
+03:2493 State20Init
+03:24cb State20
+03:56d6 State20Leave
+
+; State 21: 
+03:599f State21Enter
+03:2493 State21Init
+03:24cb State21
+03:59b4 State21Leave
+
+; State 22: 
+06:432c State22Enter
+06:4332 State22Init
+06:24c5 State22
+06:459d State22Leave
+
+; State 23: 
+01:7904 State23Enter
+01:790a State23Init
+01:24c5 State23
+01:7924 State23Leave
+
+; State 24: 
+04:78a4 State24Enter
+04:78aa State24Init
+04:24c5 State24
+04:7c9d State24Leave
+
+; State 25: 
+04:7a0e State25Enter
+04:2493 State25Init
+04:24c5 State25
+04:7c9d State25Leave
+
+; State 26: 
+04:7a2d State26Enter
+04:2493 State26Init
+04:24c5 State26
+04:7ce7 State26Leave
+
+; State 27: 
+04:4d36 State27Enter
+04:4d47 State27Init
+04:24c5 State27
+04:4db4 State27Leave
+
+; State 28: 
+04:49ac State28Enter
+04:49c4 State28Init
+04:24c5 State28
+04:4b6d State28Leave
+
+; State 29: 
+04:49a6 State29Enter
+04:49b2 State29Init
+04:24c5 State29
+04:4b6d State29Leave
+
+; State 2a: 
+04:50dd State2aEnter
+04:5111 State2aInit
+04:24c5 State2a
+04:519d State2aLeave
+
+; State 2b: 
+06:6d37 State2bEnter
+06:6d4f State2bInit
+06:24c5 State2b
+06:6dc3 State2bLeave
+
+; State 2c: 
+05:74b8 State2cEnter
+05:74be State2cInit
+05:24c5 State2c
+05:75d0 State2cLeave
+
+; State 2d: 
+05:769e State2dEnter
+05:76a4 State2dInit
+05:24c5 State2d
+05:77ba State2dLeave
+
+; State 2e: 
+05:78b2 State2eEnter
+05:78b8 State2eInit
+05:24c5 State2e
+05:798e State2eLeave
+
+; State 2f: 
+00:140c State2fEnter
+00:2493 State2fInit
+00:177f State2f
+00:179d State2fLeave
+
+; State 30: 
+01:7471 State30Enter
+01:7477 State30Init
+01:24c5 State30
+01:74b1 State30Leave
+
+; State 31: 
+01:74f9 State31Enter
+01:74ff State31Init
+01:24c5 State31
+01:7551 State31Leave
+
+; State 32: 
+01:7c53 State32Enter
+01:7c5d State32Init
+01:24c5 State32
+01:7c7a State32Leave
+
+; State 33: 
+01:7e3a State33Enter
+01:7e40 State33Init
+01:24c5 State33
+01:7e55 State33Leave
+
+; State 34: 
+06:55a5 State34Enter
+06:55b1 State34Init
+06:24c5 State34
+06:5653 State34Leave
+
+; State 35: 
+06:55ab State35Enter
+06:55ee State35Init
+06:24c5 State35
+06:5653 State35Leave
+
+; State 36: 
+06:53fd State36Enter
+06:5403 State36Init
+06:24c5 State36
+06:554e State36Leave
+
+; State 37: 
+06:4027 State37Enter
+06:402d State37Init
+06:24c5 State37
+06:40af State37Leave
+
+; State 38: 
+07:4019 State38Enter
+07:401f State38Init
+07:24c5 State38
+07:40d4 State38Leave
+
+; State 39: 
+01:46b8 State39Enter
+01:46be State39Init
+01:24c5 State39
+01:47b1 State39Leave
+
+; State 3a: 
+06:779d State3aEnter
+06:77a3 State3aInit
+06:24c5 State3a
+06:7826 State3aLeave
+
+; State 3b: 
+06:749d State3bEnter
+06:74c8 State3bInit
+06:24c5 State3b
+06:7559 State3bLeave
+
+; State 3c: 
+06:74a8 State3cEnter
+06:74cd State3cInit
+06:24c5 State3c
+06:7559 State3cLeave
+
+; State 3d: 
+06:7492 State3dEnter
+06:74c4 State3dInit
+06:24c5 State3d
+06:7559 State3dLeave
+
+; State 3e: 
+06:523b State3eEnter
+06:5241 State3eInit
+06:24c5 State3e
+06:5295 State3eLeave
+
+; State 3f: 
+06:5063 State3fEnter
+06:5071 State3fInit
+06:24c5 State3f
+06:5094 State3fLeave
+
+; State 40: 
+06:7231 State40Enter
+06:7237 State40Init
+06:24c5 State40
+06:72c0 State40Leave
+
+; State 41: 
+06:74b3 State41Enter
+06:7501 State41Init
+06:24c5 State41
+06:7570 State41Leave
+
+; State 42: 
+06:74be State42Enter
+06:7537 State42Init
+06:24c5 State42
+06:7585 State42Leave
+
+; State 43: 
+06:7c2a State43Enter
+06:7c30 State43Init
+06:24c5 State43
+06:7cb1 State43Leave
+
+; State 44: 
+01:4bca State44Enter
+01:4bd0 State44Init
+01:24c5 State44
+01:4c31 State44Leave
+
+; State 45: 
+01:700b State45Enter
+01:0001 State45Init
+01:aa00 State45
+01:0024 State45Leave
+
+; State 46: 
+02:0200 State46Enter
+02:0101 State46Init
+02:5b5b State46
+02:00b8 State46Leave
+
+; State 47: 
+41:0101 State47Enter
+41:5b6f State47Init
+41:00b8 State47
+41:0144 State47Leave
+
+; State 48: 
+01:5b85 State48Enter
+01:0090 State48Init
+01:01c0 State48
+01:9b01 State48Leave
+
+; State 49: 
+5b:00a8 State49Enter
+5b:0141 State49Init
+5b:5501 State49
+5b:455b State49Leave
+
+; State 4a: 
+01:aa40 State4aEnter
+01:ead9 State4aInit
+01:0ad9 State4a
+01:81da State4aLeave
+
+; State 4b: 
+d8:d8a1 State4bEnter
+d8:d8c1 State4bInit
+d8:d8e1 State4b
+d8:d901 State4bLeave
+
+; State 4c: 
+21:aad9 State4cEnter
+21:c1d9 State4cInit
+21:e1d9 State4c
+21:01d9 State4cLeave
+
+; State 4d: 
+da:d880 State4dEnter
+da:d8a0 State4dInit
+da:d8c0 State4d
+da:d8e0 State4dLeave
+
+; State 4e: 
+20:40d9 State4eEnter
+20:80d9 State4eInit
+20:a0d9 State4e
+20:c0d9 State4eLeave
+
+; State 4f: 
+d9:d9e0 State4fEnter
+d9:da00 State4fInit
+d9:d888 State4f
+d9:d8a8 State4fLeave
+
+
+
+
 ; ROM routines
 00:11e2 Copy256b
 00:11e5 Copy224b
