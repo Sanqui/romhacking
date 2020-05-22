@@ -252,11 +252,22 @@
 04:24c5 State29
 04:4b6d State29Leave
 
-; State 2a: 
+; State 2a: Folio Triplicus
 04:50dd State2aEnter
 04:5111 State2aInit
 04:24c5 State2a
 04:519d State2aLeave
+
+04:5220 FolioTriplicusA ; POI the bug is right here
+04:524e FolioTriplicusA.not_in_battle
+04:5262 FolioTriplicusA.burn_cards
+04:52ea HasCardsForCombo1? ; this is a bit weird/sus...
+04:5365 HasCardsForCombo? ; this one is a bit more legit
+04:4caf GetCardCount
+04:5044 CardComboCardTable
+
+06:5d87 IsCardRare? ; this is stupid
+06:5af8 RareCardIndices
 
 ; State 2b: 
 06:6d37 State2bEnter
@@ -267,19 +278,19 @@
 ; State 2c: 
 05:74b8 State2cEnter
 05:74be State2cInit
-05:24c5 State2c
+00:24c5 State2c
 05:75d0 State2cLeave
 
 ; State 2d: 
 05:769e State2dEnter
 05:76a4 State2dInit
-05:24c5 State2d
+00:24c5 State2d
 05:77ba State2dLeave
 
 ; State 2e: 
 05:78b2 State2eEnter
 05:78b8 State2eInit
-05:24c5 State2e
+00:24c5 State2e
 05:798e State2eLeave
 
 ; State 2f: 
@@ -593,6 +604,7 @@ d9:d8a8 State4fLeave
 00:2ea4 WriteDEAtBCPlus3
 00:2eae DecAtHLPlus1SaveF ; ????
 00:275f WeirdRNG
+00:29e0 GetObjectDataValue???
 
 00:314a HLTimes32
 00:314b HLTimes16
@@ -623,6 +635,9 @@ d9:d8a8 State4fLeave
 01:4aa1 CheatMapFromMapTable?
 01:4c31 CheatMenuState
 01:4d5f CheatSoundMusicMenuStateInit ; POI doubly unused?
+
+01:6e67 SetupCardComboBg??
+05:5663 LoadCardComboGfx???
 
 04:69ae InitItemMenu ; takes item category
 ; gloves are 1, hats are 2, cloaks are 3, belts are 4, shoes are 5
@@ -909,6 +924,7 @@ d9:d8a8 State4fLeave
 00:17cc MapState.debugnotheld
 00:1837 DoMapStuff
 00:2448 SwitchState
+00:244b SwitchStateWithParams
 00:24a2 JumpStateEnter  ; enter / prepare for fade in (gfx)
 00:24aa JumpStateInit   ; init
 00:24b2 JumpState       ; every frame
@@ -971,7 +987,7 @@ d9:d8a8 State4fLeave
 03:5a7c GetSpellMPCosts
 03:5a8c SpellTakeMP
 03:4a83 GetSpellDamage
-03:48ef HitBattler
+03:48ef HitBattlers
 03:4a18 DetermineMiss
 03:4a1e DetermineMiss.harry
 03:4a40 DetermineMiss.hit
@@ -994,6 +1010,68 @@ d9:d8a8 State4fLeave
 03:7c6d SetUpScanlineEffects?
 03:4b6f GetTargetVariableIntoDE
 03:4b7a GetBattlerVariableIntoHL
+
+03:4887 SetupCardCombo?
+05:524d RainOfBludgersHit?
+03:4896 CardComboAOE?
+05:5109 MoveCardComboValue
+05:4e0c SomeCardComboVisualEffectTable
+05:4e72 SomeOtherCardComboVisualEffectTable
+05:57d7 JumpCardCombo
+05:57db CardComboEffectJumptable
+
+05:5845 CardComboEffectCreatePotion
+05:585b CardComboEffectHealthBoost
+05:5881 CardComboEffectNausea
+05:58b3 CardComboEffectRegeneration
+05:58c4 CardComboEffectRainofBludgers
+05:58c8 CardComboEffectSnitchStrike
+05:58cb CardComboEffectSnitchStreak
+05:58ce CardComboEffectConjureSnack
+05:58e5 CardComboEffectExtraCredit
+05:58ed CardComboEffectCurePoison
+05:58f5 CardComboEffectRemoveCurse
+05:58fc CardComboEffectProtect
+;05:5841 CardComboEffectDeflect
+05:5841 CardComboEffectEnd
+05:590b CardComboEffectStrength
+05:5916 CardComboEffectCarbonCopy
+05:591e CardComboEffectDireStrength
+05:5942 CardComboEffectSleep
+05:5958 CardComboEffectItemIntoFeather
+05:59ab CardComboEffectImprovedMagic
+05:59c7 CardComboEffectPoisonImmunity
+05:59d9 CardComboEffectDrone
+05:5841 CardComboEffectDistract
+05:59dc CardComboEffectLullaby
+05:59df CardComboEffectStinkweed
+05:5a1e CardComboEffectSlow
+05:5a54 CardComboEffectSluggish
+05:5a67 CardComboEffectTempest
+05:5a6a CardComboEffectAlterEnemy
+05:5a6d CardComboEffectDoubleSP
+05:5a82 CardComboEffectReversal
+05:5a99 CardComboEffectSickleSeek
+05:5aa1 CardComboEffectEncounterTrack
+05:5ab1 CardComboEffectTelegraphPunch
+05:5ab4 CardComboEffectWeakPoint
+05:5ab7 CardComboEffectReplenishMagic
+05:5ac8 CardComboEffectMagicReversal
+05:5ad7 CardComboEffectReplenishStamina
+05:5ae8 CardComboEffectSummonUmbrella
+05:5aec CardComboEffectScholarship
+05:5841 CardComboEffectHealingAttack
+05:5af4 CardComboEffectLevelUp
+05:5bd4 CardComboEffectSPGain
+05:5b8c CardComboEffectMPGain
+05:5c1c CardComboEffectMPErase
+05:5c26 CardComboEffectReplenishAll
+05:5c45 CardComboEffectMagicImmunity
+05:5c4d CardComboEffectImmunity
+05:5c50 CardComboEffectExhaust
+05:5c89 CardComboEffectBlastingCurse
+05:5c8c CardComboEffectHeroicStrength
+05:5c8f CardComboEffectFullEnchantment
 
 03:477f DetermineBattleRewards
 03:4814 DetermineBattleRewards.no_item
@@ -1385,9 +1463,11 @@ d9:d8a8 State4fLeave
 0:cb83 wDamage
 0:cb90 wCurItemId
 0:cb91 wMenuSkip
+0:cbb1 wUsedCardCombo
 0:cbe1 wCanShootOwls ; POI easter egg
 0:cbe2 wBattler
 0:cbe7 wTarget
+0:cbeb wFolioTriplicusPageOffset
 0:cbe6 wCurSpell
 0:cbed wSomeBattleDelay?
 0:cc03 wBattleDelayAfterRound
@@ -1481,11 +1561,14 @@ d9:d8a8 State4fLeave
 0:cdfb wHarryLevel
 0:cae1 wEnterMapHarryDirection
 
+0:cd63 wCardCombo
+
 0:caf8 wNextCloudTimeRandom
 0:caf9 wNextCloudTimeBase
 0:cafa wNextCloudUnk?
 0:cafb wCloudTimeRandom
 0:cafc wCloudTimeBase
+0:cafd wEncounterTrackCounter
 
 0:cbf8 wBattleEXPGained ; word
 0:cbfa wBattleSicklesFound ; word
@@ -1518,6 +1601,7 @@ d9:d8a8 State4fLeave
 5:d407 wBattleHarryMP
 5:d40b wBattleHarryStr
 5:d40c wBattleHarryMagicStr
+5:d412 wBattleHarryAnimation???
 
 5:d419 wEnemy1
 5:d41a wEnemy1MaxHP
@@ -1562,6 +1646,7 @@ d9:d8a8 State4fLeave
 6:d10c wItemsMenu ; in menu
 
 6:d50a wCardAmounts
+6:d570 wCardsForCardCombosHad ; 3 bits for each card combo, gets set in the menu
 6:d5d5 wScriptVariables
 6:d5d5 wScriptCurrentQuest
 6:d6c7 wDisableClouds
@@ -1585,6 +1670,10 @@ d9:d8a8 State4fLeave
 00:ffda hNewMap?
 00:FFBD hFarCallLo
 00:FFBE hFarCallHi
+00:FFC3 hSecondFrame ; counts down
+00:FFC4 hSecond
+00:ffC5 hMinute
+00:ffc6 hHour
 00:FFcc hPrevState
 00:FFcf hState
 00:FFD2 hNewState
