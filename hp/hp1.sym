@@ -207,6 +207,19 @@
 ; State 22: 
 06:432c State22Enter
 06:4332 State22Init
+06:4332 VictoryStateInit
+06:435d VictoryStateInit.not_boss
+06:4387 VictoryStateInit.no_flag6
+06:438c VictoryStateInit.reset_scanline_effects
+06:439c VictoryStateInit.fade_in
+06:43b0 VictoryStateInit.setup_harry_palette
+06:43dc VictoryStateInit.harry_no_robe
+06:440a VictoryStateRenderExpSicklesStrings
+06:444f VictoryStateRenderExpSicklesValues
+06:446c VictoryStateRenderExpSicklesValues.double_exp
+06:4475 VictoryStateRenderExpSicklesValues.no_double_exp
+06:448f VictoryStateRenderExpSicklesValues.quadruple_sickles
+06:4499 VictoryStateRenderExpSicklesValues.no_quadruple_sickles
 06:24c5 State22
 06:459d State22Leave
 
@@ -535,6 +548,7 @@ d9:d8a8 State4fLeave
 00:1251 Copy2b
 00:1254 Copy1b
 
+00:301F RenderString
 
 00:335e FarCall01to02
 00:3365 FarCall01to03
@@ -636,7 +650,8 @@ d9:d8a8 State4fLeave
 01:4c31 CheatMenuState
 01:4d5f CheatSoundMusicMenuStateInit ; POI doubly unused?
 
-01:6e67 SetupCardComboBg??
+01:6e67 RenderStringFromTableAtHL
+01:30b6 RenderStringFromTable
 05:5663 LoadCardComboGfx???
 
 04:69ae InitItemMenu ; takes item category
@@ -676,6 +691,7 @@ d9:d8a8 State4fLeave
 04:6452 EquipmentStatBoostTable ; order: sp str def mstr mdef pri
 04:689e GetItemCount
 04:58b9 StateRoutineTable
+04:778a MakeItemObject?
 
 06:5f3c NewGameInitHarry
 06:5f8f RecalculateHarryStats
@@ -706,7 +722,7 @@ d9:d8a8 State4fLeave
 00:01d6 HandleObject
 00:01fa ObjectDone
 00:0203 NextObject
-00:03a0 MakeObject?? ; maybe MakeCloudObject
+00:03a0 MakeObject
 00:03d7 InitObject?
 01:41b3 JumpObject
 01:41b4 Objects
@@ -948,6 +964,7 @@ d9:d8a8 State4fLeave
 00:2937 XLoadBattleBackgroundTiles
 00:3332 XLoadBattleBackgroundTilemap
 00:393e PlayPCM
+00:395e PlaySound
 
 00:0098 CplDE?
 00:00a5 Multiply?
@@ -1074,7 +1091,7 @@ d9:d8a8 State4fLeave
 05:5c8f CardComboEffectFullEnchantment
 
 03:477f DetermineBattleRewards
-03:4814 DetermineBattleRewards.no_item
+03:4814 DetermineBattleRewards.no_enemy
 
 03:6c37 CalcDistance
 03:6bef CalcDistanceX
@@ -1339,7 +1356,8 @@ d9:d8a8 State4fLeave
 05:73e1 ScriptCall
 05:7401 ScriptReturn
 
-06:44a7 VictoryStateHandleItems?
+06:44a7 VictoryStateRenderItems
+06:44d9 VictoryStateRenderItems.render_item_object
 06:45b7 VictoryStateA
 06:45ce VictoryStateA.next_item
 06:45fa VictoryStateA.done_item
@@ -1461,6 +1479,8 @@ d9:d8a8 State4fLeave
 0:cb29 wSpellMenu0Cost
 0:cb2a wSpellMenu1StringId ; word
 0:cb83 wDamage
+0:cb86 wRenderItemX
+0:cb87 wRenderItemY
 0:cb90 wCurItemId
 0:cb91 wMenuSkip
 0:cbb1 wUsedCardCombo
@@ -1484,6 +1504,7 @@ d9:d8a8 State4fLeave
 0:cdee wHarryMagicDef
 0:cdef wHarryMagicDef
 0:cdf0 wHarryMagicDef
+0:cdfc wSickles
 0:cdfe wKnownSpells ; short bitfield
 0:ce04 wRNGIndex
 0:ce0b wSureHitCounter
@@ -1514,6 +1535,9 @@ d9:d8a8 State4fLeave
 ;0:c5b7 wMapBossCloud?.x?
 ;0:c5b9 wMapBossCloud?.y?
 ;0:c5f7 wMapBossCloud?.callback
+
+0:c1eb wStringWidth
+0:c234 wStringUnk
 
 00:CA67 wObject23
 00:CA16 wObject22
@@ -1640,6 +1664,13 @@ d9:d8a8 State4fLeave
 6:d000 wItemCounts
 6:d053 wNumChocolateFrogs
 
+6:d100 wHarryGloves
+6:d101 wHarryHat
+6:d102 wHarryRobe
+6:d103 wHarryGloves
+6:d103 wHarryShoes
+
+
 6:d108 wCurItemNo
 6:d109 wNumItemsOnPage
 
@@ -1657,6 +1688,7 @@ d9:d8a8 State4fLeave
 00:ff90 hCameraX
 00:ff92 hCameraY
 00:ff9a hObjectType
+00:ff9b hObjectAttribute
 00:ffa4 hJoyHeld
 00:ffa5 hJoyNew
 00:ffbc hTmp

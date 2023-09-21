@@ -480,6 +480,7 @@
 
 0:cecb wStringNumBak
 0:CE3E wRNGIndex
+0:CE3D wDeck
 0:ce4b wEnemyInformousBitset
 0:ce5b wEnemyEncounteredBitset 
 0:cc2e wMenuSkip
@@ -501,6 +502,7 @@
 0:cec5 wUnkSetByPortraitTextCheat
 
 6:dcc8 wQuest
+6:ddbb wQuestDeck
 6:ddc7 wSchoolRobe
 6:ddc5 wMapScriptVar ; used by scripts
 ; 4 = have fawkes
